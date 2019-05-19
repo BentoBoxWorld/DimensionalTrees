@@ -1,0 +1,13 @@
+name: DimensionalTrees
+main: world.bentobox.dimensionaltrees.DimensionalTrees
+version: ${version}
+
+prefix: DimensionalTrees
+
+authors: [AwakenedRedstone, tastybento, Poslovitch]
+
+softdepend: BSkyBlock
+
+permissions:
+  bskyblock.dimensionaltrees.tree:
+    description: None
