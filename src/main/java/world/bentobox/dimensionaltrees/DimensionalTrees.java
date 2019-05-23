@@ -42,6 +42,12 @@ public final class DimensionalTrees extends Addon {
 
     }
 
+    @Override
+    public void onReload() {
+        loadSettings();
+        getLogger().info(getSettings().getReloadMessage());
+    }
+
     public Settings getSettings() {
         return settings;
     }

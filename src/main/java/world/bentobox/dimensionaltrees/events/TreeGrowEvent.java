@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.dimensionaltrees.DimensionalTrees;
 
-import java.util.Set;
+import java.util.List;
 
 public class TreeGrowEvent implements Listener {
 
@@ -108,6 +108,7 @@ public class TreeGrowEvent implements Listener {
     }
 
     private boolean saplingVerification(Material sapling) {
+        addon.log("List info:\n" + "Size: " + treeTypes().size() + "\nList contents: " + treeTypes());
         Material oak = Material.OAK_SAPLING;
         Material spruce = Material.SPRUCE_SAPLING;
         Material dark_oak = Material.DARK_OAK_SAPLING;
@@ -153,7 +154,7 @@ public class TreeGrowEvent implements Listener {
                     break;
             }
         }
-        addon.log("Hmmm...."+treeTypes().size());
+        addon.log("Hmmm...." + treeTypes().size() + "\n" + treeTypes());
         return false;
     }
 
@@ -197,7 +198,7 @@ public class TreeGrowEvent implements Listener {
         return addon.getSettings().isSendLog();
     }
 
-    private Set<String> treeTypes() {
+    private List<String> treeTypes() {
         return addon.getSettings().getTreeTypes();
     }
 

@@ -4,10 +4,7 @@ import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.database.objects.DataObject;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Settings implements DataObject {
 
@@ -76,7 +73,7 @@ public class Settings implements DataObject {
     @ConfigComment("Add a # before to disable and remove the # to enable.")
     @ConfigComment("Like the default settings.")
     @ConfigEntry(path = "dimensionaltrees.options.tree_types")
-    private Set<String> treeTypes = new HashSet<String>();
+    private List<String> treeTypes = new ArrayList<String>(Arrays.asList("oak", "acacia", "birch"));
 
 
 
@@ -122,7 +119,7 @@ public class Settings implements DataObject {
         this.sendLog = sendLog;
     }
 
-    public void setTreeTypes(Set<String> treeTypes) {
+    public void setTreeTypes(List<String> treeTypes) {
         this.treeTypes = treeTypes;
     }
 
@@ -172,7 +169,7 @@ public class Settings implements DataObject {
         return sendLog;
     }
 
-    public Set<String> getTreeTypes() {
+    public List<String> getTreeTypes() {
         return treeTypes;
     }
 

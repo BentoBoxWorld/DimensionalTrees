@@ -9,5 +9,5 @@ authors: [AwakenedRedstone, tastybento, Poslovitch]
 softdepend: BSkyBlock
 
 permissions:
-  bskyblock.dimensionaltrees.tree:
+  admin.dimensionaltrees.*:
     description: None
