@@ -32,36 +32,37 @@ public class TreeGrowEvent implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTreeGrow(StructureGrowEvent e) {
 
-        addon.log("" + e.getWorld().getBlockAt(e.getLocation()).getType());
         if (!isEnabled()) {
             return;
         }
 
         // Don't do anything if we're not in the right place.
         if (!bentoBox.getIWM().inWorld(e.getWorld())) {
-            addon.log("world");
             return;
         }
 
-        if (!saplingVerification(e.getWorld().getBlockAt(e.getLocation()).getType())) {
-            addon.log("sapling");
-            return;
-        }
 
         if (endLeaves() == null || endLogs() == null || netherLeaves() == null || netherLogs() == null) {
             e.setCancelled(true);
             double x = e.getLocation().getBlockX();
             double y = e.getLocation().getBlockY();
             double z = e.getLocation().getBlockZ();
-            World dimension = e.getLocation().getWorld();
+            World.Environment dimension = e.getLocation().getWorld().getEnvironment();
+            String dimensionName = "";
+
+            if (dimension == World.Environment.NORMAL) dimensionName = "OVERWORLD";
+            if (dimension == World.Environment.NETHER) dimensionName = "NETHER";
+            if (dimension == World.Environment.THE_END) dimensionName = "THE_END";
+
 
             if (e.isFromBonemeal() && e.getPlayer() != null) e.getPlayer().sendMessage(errorMessage());
-            else if (sendLog()) addon.logError("Can't grow the tree. A invalid material has been detected.\n" +
+            if (sendLog()) addon.logError("Can't grow a tree. A invalid material has been detected.\n" +
                     "Tree location: " +
                     "\n     x= " + x +
                     "\n     y= " + y +
                     "\n     z= " + z +
-                    "\n     Dimension= " + dimension);
+                    "\n     Dimension= " + dimensionName +
+                    "\n");
             return;
         }
 
@@ -70,15 +71,25 @@ public class TreeGrowEvent implements Listener {
             double x = e.getLocation().getBlockX();
             double y = e.getLocation().getBlockY();
             double z = e.getLocation().getBlockZ();
-            World dimension = e.getLocation().getWorld();
+            World.Environment dimension = e.getLocation().getWorld().getEnvironment();
+            String dimensionName = "";
+
+            if (dimension == World.Environment.NORMAL) dimensionName = "OVERWORLD";
+            if (dimension == World.Environment.NETHER) dimensionName = "NETHER";
+            if (dimension == World.Environment.THE_END) dimensionName = "THE_END";
+
 
             if (e.isFromBonemeal() && e.getPlayer() != null) e.getPlayer().sendMessage(errorMessage());
-            else if (sendLog()) addon.logError("Can't grow the tree. A invalid material has been detected.\n" +
+            if (sendLog()) addon.logError("Can't grow the tree. A invalid material has been detected.\n" +
                     "Tree location: " +
                     "\n     x= " + x +
                     "\n     y= " + y +
                     "\n     z= " + z +
-                    "\n     Dimension= " + dimension);
+                    "\n     Dimension= " + dimensionName);
+            return;
+        }
+
+        if (!saplingVerification(e.getWorld().getBlockAt(e.getLocation()).getType())) {
             return;
         }
 
@@ -108,7 +119,6 @@ public class TreeGrowEvent implements Listener {
     }
 
     private boolean saplingVerification(Material sapling) {
-        addon.log("List info:\n" + "Size: " + treeTypes().size() + "\nList contents: " + treeTypes());
         Material oak = Material.OAK_SAPLING;
         Material spruce = Material.SPRUCE_SAPLING;
         Material dark_oak = Material.DARK_OAK_SAPLING;
@@ -118,14 +128,11 @@ public class TreeGrowEvent implements Listener {
         String oakString = "oak"; String spruceString = "spruce"; String dark_oakString = "dark_oak"; String birchString = "birch"; String jungleString = "jungle"; String acaciaString = "acacia";
         if (sapling == oak || sapling == spruce || sapling == dark_oak || sapling == birch || sapling == jungle || sapling == acacia)
         {
-            addon.log("Passed");
             switch (sapling)
             {
                 case OAK_SAPLING:
-                    addon.log("Passed again");
                     if (treeTypes().contains(oakString))
                         return true;
-                    else addon.log("foi  no oakString");
                     break;
 
                 case SPRUCE_SAPLING:
@@ -154,7 +161,6 @@ public class TreeGrowEvent implements Listener {
                     break;
             }
         }
-        addon.log("Hmmm...." + treeTypes().size() + "\n" + treeTypes());
         return false;
     }
 

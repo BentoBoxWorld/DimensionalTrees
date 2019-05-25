@@ -2,10 +2,13 @@ package world.bentobox.dimensionaltrees;
 
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
+import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 import java.util.*;
 
+@StoreAt(filename="config.yml", path="addons/DimensionalTrees") // Explicitly call out what name this should have.
+@ConfigComment("DimensionalTrees Configuration [version]")
 public class Settings implements DataObject {
 
     /* Commands */
@@ -13,6 +16,7 @@ public class Settings implements DataObject {
     @ConfigComment("Main command to DimensionalTrees [Admins]")
     @ConfigEntry(path = "dimensionaltrees.commands.admin", needsReset = true)
     private String adminCommand = "dtrees dimensionaltrees dt";
+
 
     /* Blocks */
     @ConfigComment("")
@@ -35,16 +39,13 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.logs")
     private String nether_logs = "gravel";
 
+
     /* Messages */
     @ConfigComment("")
     @ConfigComment("Warning to invalid blocks on config file")
     @ConfigEntry(path = "dimensionaltrees.messages.invalid")
     private String invalidMaterial = "§cCan't grow the tree. A invalid material has been detected.";
 
-    @ConfigComment("")
-    @ConfigComment("Reload message")
-    @ConfigEntry(path = "dimensionaltrees.messages.reload")
-    private String reloadMessage = "§aDimensionalTrees reloaded.";
 
     /* Options */
     @ConfigComment("")
@@ -123,10 +124,6 @@ public class Settings implements DataObject {
         this.treeTypes = treeTypes;
     }
 
-    public void setReloadMessage(String reloadMessage) {
-        this.reloadMessage = reloadMessage;
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -171,10 +168,6 @@ public class Settings implements DataObject {
 
     public List<String> getTreeTypes() {
         return treeTypes;
-    }
-
-    public String getReloadMessage() {
-        return reloadMessage;
     }
 
     public boolean isEnabled() {

@@ -26,9 +26,6 @@ dimensionaltrees:
     # Warning to invalid blocks on config file
     invalid: "§cCan't grow the tree. A invalid material has been detected."
 
-    # Reload message
-    reload: "§aDimensionalTrees reloaded."
-
   options:
 
     # Defines if send debug messages to the log.
