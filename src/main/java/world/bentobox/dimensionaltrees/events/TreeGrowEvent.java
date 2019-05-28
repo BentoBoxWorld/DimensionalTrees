@@ -43,49 +43,12 @@ public class TreeGrowEvent implements Listener {
 
 
         if (endLeaves() == null || endLogs() == null || netherLeaves() == null || netherLogs() == null) {
-            e.setCancelled(true);
-            double x = e.getLocation().getBlockX();
-            double y = e.getLocation().getBlockY();
-            double z = e.getLocation().getBlockZ();
-            World.Environment dimension = e.getLocation().getWorld().getEnvironment();
-            String dimensionName = "";
-
-            if (dimension == World.Environment.NORMAL) dimensionName = "OVERWORLD";
-            if (dimension == World.Environment.NETHER) dimensionName = "NETHER";
-            if (dimension == World.Environment.THE_END) dimensionName = "THE_END";
-
-
-            if (e.isFromBonemeal() && e.getPlayer() != null) e.getPlayer().sendMessage(errorMessage());
-            if (sendLog()) addon.logError("Can't grow a tree. A invalid material has been detected.\n" +
-                    "Tree location: " +
-                    "\n     x= " + x +
-                    "\n     y= " + y +
-                    "\n     z= " + z +
-                    "\n     Dimension= " + dimensionName +
-                    "\n");
+            warning(e);
             return;
         }
 
         if (Material.getMaterial(ENDLEAVES()) == null || Material.getMaterial(ENDLOGS()) == null || Material.getMaterial(NETHERLEAVES()) == null || Material.getMaterial(NETHERLOGS()) == null) {
-            e.setCancelled(true);
-            double x = e.getLocation().getBlockX();
-            double y = e.getLocation().getBlockY();
-            double z = e.getLocation().getBlockZ();
-            World.Environment dimension = e.getLocation().getWorld().getEnvironment();
-            String dimensionName = "";
-
-            if (dimension == World.Environment.NORMAL) dimensionName = "OVERWORLD";
-            if (dimension == World.Environment.NETHER) dimensionName = "NETHER";
-            if (dimension == World.Environment.THE_END) dimensionName = "THE_END";
-
-
-            if (e.isFromBonemeal() && e.getPlayer() != null) e.getPlayer().sendMessage(errorMessage());
-            if (sendLog()) addon.logError("Can't grow the tree. A invalid material has been detected.\n" +
-                    "Tree location: " +
-                    "\n     x= " + x +
-                    "\n     y= " + y +
-                    "\n     z= " + z +
-                    "\n     Dimension= " + dimensionName);
+            warning(e);
             return;
         }
 
@@ -114,7 +77,7 @@ public class TreeGrowEvent implements Listener {
                 }
             }
         } catch (Exception exception) {
-            addon.logError("A Invalid material has been detected. Can't transform the tree.");
+            warning(e);
         }
     }
 
@@ -162,6 +125,27 @@ public class TreeGrowEvent implements Listener {
             }
         }
         return false;
+    }
+
+    public void warning(StructureGrowEvent e) {
+        double x = e.getLocation().getBlockX();
+        double y = e.getLocation().getBlockY();
+        double z = e.getLocation().getBlockZ();
+        World.Environment dimension = e.getLocation().getWorld().getEnvironment();
+        String dimensionName = "";
+
+        if (dimension == World.Environment.NORMAL) dimensionName = "OVERWORLD";
+        if (dimension == World.Environment.NETHER) dimensionName = "NETHER";
+        if (dimension == World.Environment.THE_END) dimensionName = "THE_END";
+
+
+        if (e.isFromBonemeal() && e.getPlayer() != null) e.getPlayer().sendMessage(errorMessage());
+        if (sendLog()) addon.logError("Can't grow the tree. A invalid material has been detected.\n" +
+                "Tree location: " +
+                "\n     x= " + x +
+                "\n     y= " + y +
+                "\n     z= " + z +
+                "\n     Dimension= " + dimensionName);
     }
 
     private String endLeaves() {
