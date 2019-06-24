@@ -3,13 +3,13 @@ package world.bentobox.dimensionaltrees;
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.StoreAt;
-import world.bentobox.bentobox.database.objects.DataObject;
+import world.bentobox.bentobox.api.configuration.ConfigObject;
 
 import java.util.*;
 
 @StoreAt(filename="config.yml", path="addons/DimensionalTrees") // Explicitly call out what name this should have.
 @ConfigComment("DimensionalTrees Configuration [version]")
-public class Settings implements DataObject {
+public class Settings implements ConfigObject {
 
     /* Commands */
     @ConfigComment("")
