@@ -1,5 +1,7 @@
 package world.bentobox.dimensionaltrees.events;
 
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.World;
@@ -9,19 +11,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.eclipse.jdt.annotation.NonNull;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.dimensionaltrees.DimensionalTrees;
 
-import java.util.List;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
+import world.bentobox.dimensionaltrees.DimensionalTrees;
 
 public class TreeGrowEvent implements Listener {
 
     private DimensionalTrees addon;
-    private BentoBox bentoBox;
 
-    public TreeGrowEvent(@NonNull DimensionalTrees addon, BentoBox bentoBox) {
+    public TreeGrowEvent(@NonNull DimensionalTrees addon) {
         this.addon = addon;
-        this.bentoBox = bentoBox;
     }
 
     /**
@@ -37,22 +37,19 @@ public class TreeGrowEvent implements Listener {
         }
 
         // Don't do anything if we're not in the right place.
-        if (!bentoBox.getIWM().inWorld(e.getWorld())) {
+        if (!addon.getPlugin().getIWM().inWorld(e.getWorld())) {
             return;
         }
 
-
-        if (endLeaves() == null || endLogs() == null || netherLeaves() == null || netherLogs() == null) {
+        // Verify settings
+        if (endLeaves() == null || endLogs() == null || netherLeaves() == null || netherLogs() == null
+                || Material.matchMaterial(endLeaves()) == null || Material.matchMaterial(endLogs()) == null
+                || Material.matchMaterial(netherLeaves()) == null || Material.matchMaterial(netherLogs()) == null) {
             warning(e);
             return;
         }
-
-        if (Material.getMaterial(ENDLEAVES()) == null || Material.getMaterial(ENDLOGS()) == null || Material.getMaterial(NETHERLEAVES()) == null || Material.getMaterial(NETHERLOGS()) == null) {
-            warning(e);
-            return;
-        }
-
-        if (!saplingVerification(e.getWorld().getBlockAt(e.getLocation()).getType())) {
+        // Verify the sapling is in the settings list
+        if (!treeTypes().contains(e.getLocation().getBlock().getType().name().replace("", "_SAPLING").toLowerCase())) {
             return;
         }
 
@@ -61,18 +58,18 @@ public class TreeGrowEvent implements Listener {
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
-                        b.setType(Material.getMaterial(NETHERLOGS()));
+                        b.setType(Material.matchMaterial(netherLogs()));
                     } else if (Tag.LEAVES.isTagged(b.getType())) {
-                        b.setType(Material.getMaterial(NETHERLEAVES()));
+                        b.setType(Material.matchMaterial(netherLeaves()));
                     }
                 }
             } else if (e.getWorld().getEnvironment().equals(World.Environment.THE_END) && isEndEnabled()) {
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
-                        b.setType(Material.getMaterial(ENDLOGS()));
+                        b.setType(Material.matchMaterial(endLogs()));
                     } else if (Tag.LEAVES.isTagged(b.getType())) {
-                        b.setType(Material.getMaterial(ENDLEAVES()));
+                        b.setType(Material.matchMaterial(endLeaves()));
                     }
                 }
             }
@@ -81,71 +78,16 @@ public class TreeGrowEvent implements Listener {
         }
     }
 
-    private boolean saplingVerification(Material sapling) {
-        Material oak = Material.OAK_SAPLING;
-        Material spruce = Material.SPRUCE_SAPLING;
-        Material dark_oak = Material.DARK_OAK_SAPLING;
-        Material birch = Material.BIRCH_SAPLING;
-        Material jungle = Material.JUNGLE_SAPLING;
-        Material acacia = Material.ACACIA_SAPLING;
-        String oakString = "oak"; String spruceString = "spruce"; String dark_oakString = "dark_oak"; String birchString = "birch"; String jungleString = "jungle"; String acaciaString = "acacia";
-        if (sapling == oak || sapling == spruce || sapling == dark_oak || sapling == birch || sapling == jungle || sapling == acacia)
-        {
-            switch (sapling)
-            {
-                case OAK_SAPLING:
-                    if (treeTypes().contains(oakString))
-                        return true;
-                    break;
-
-                case SPRUCE_SAPLING:
-                    if (treeTypes().contains(spruceString))
-                        return true;
-                    break;
-
-                case DARK_OAK_SAPLING:
-                    if (treeTypes().contains(dark_oakString))
-                        return true;
-                    break;
-
-                case BIRCH_SAPLING:
-                    if (treeTypes().contains(birchString))
-                        return true;
-                    break;
-
-                case JUNGLE_SAPLING:
-                    if (treeTypes().contains(jungleString))
-                        return true;
-                    break;
-
-                case ACACIA_SAPLING:
-                    if (treeTypes().contains(acaciaString))
-                        return true;
-                    break;
-            }
-        }
-        return false;
-    }
 
     public void warning(StructureGrowEvent e) {
-        double x = e.getLocation().getBlockX();
-        double y = e.getLocation().getBlockY();
-        double z = e.getLocation().getBlockZ();
-        World.Environment dimension = e.getLocation().getWorld().getEnvironment();
-        String dimensionName = "";
-
-        if (dimension == World.Environment.NORMAL) dimensionName = "OVERWORLD";
-        if (dimension == World.Environment.NETHER) dimensionName = "NETHER";
-        if (dimension == World.Environment.THE_END) dimensionName = "THE_END";
-
-
-        if (e.isFromBonemeal() && e.getPlayer() != null) e.getPlayer().sendMessage(errorMessage());
-        if (sendLog()) addon.logError("Can't grow the tree. A invalid material has been detected.\n" +
-                "Tree location: " +
-                "\n     x= " + x +
-                "\n     y= " + y +
-                "\n     z= " + z +
-                "\n     Dimension= " + dimensionName);
+        if (e.isFromBonemeal() && e.getPlayer() != null) {
+            User.getInstance(e.getPlayer()).sendMessage("dimensionaltrees.invalid-material");
+        }
+        if (sendLog()) {
+            addon.logError("Can't grow the tree. A invalid material has been detected.\n" +
+                    "Tree location: " + e.getWorld().getName() + " " + Util.xyz(e.getLocation().toVector()) +
+                    "\nDimension= " + Util.prettifyText(e.getWorld().getEnvironment().name()));
+        }
     }
 
     private String endLeaves() {
@@ -162,26 +104,6 @@ public class TreeGrowEvent implements Listener {
 
     private String netherLogs() {
         return addon.getSettings().getNether_logs();
-    }
-
-    private String errorMessage() {
-        return addon.getSettings().getInvalidMaterial();
-    }
-
-    private String ENDLEAVES() {
-        return endLeaves().toUpperCase();
-    }
-
-    private String ENDLOGS() {
-        return endLogs().toUpperCase();
-    }
-
-    private String NETHERLEAVES() {
-        return netherLeaves().toUpperCase();
-    }
-
-    private String NETHERLOGS() {
-        return netherLogs().toUpperCase();
     }
 
     private boolean sendLog() {

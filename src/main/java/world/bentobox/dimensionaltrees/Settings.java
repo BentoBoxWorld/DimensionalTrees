@@ -6,6 +6,7 @@ import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @StoreAt(filename="config.yml", path="addons/DimensionalTrees") // Explicitly call out what name this should have.
 @ConfigComment("DimensionalTrees Configuration [version]")
@@ -39,14 +40,6 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.logs")
     private String nether_logs = "gravel";
 
-
-    /* Messages */
-    @ConfigComment("")
-    @ConfigComment("Warning to invalid blocks on config file")
-    @ConfigEntry(path = "dimensionaltrees.messages.invalid")
-    private String invalidMaterial = "§cCan't grow the tree. A invalid material has been detected.";
-
-
     /* Options */
     @ConfigComment("")
     @ConfigComment("Defines if send debug messages to the log.")
@@ -77,20 +70,6 @@ public class Settings implements ConfigObject {
     private List<String> treeTypes = new ArrayList<String>(Arrays.asList("oak", "acacia", "birch"));
 
 
-
-    private String uniqueId = "config";
-
-    @Override
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    @Override
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-
     /* Set Config */
     public void setAdminCommand(String adminCommand) {
         this.adminCommand = adminCommand;
@@ -110,10 +89,6 @@ public class Settings implements ConfigObject {
 
     public void setNether_logs(String nether_logs) {
         this.nether_logs = nether_logs;
-    }
-
-    public void setInvalidMaterial(String invalidMaterial) {
-        this.invalidMaterial = invalidMaterial;
     }
 
     public void setSendLog(boolean sendLog) {
@@ -158,16 +133,13 @@ public class Settings implements ConfigObject {
         return nether_logs;
     }
 
-    public String getInvalidMaterial() {
-        return invalidMaterial;
-    }
-
     public boolean isSendLog() {
         return sendLog;
     }
 
     public List<String> getTreeTypes() {
-        return treeTypes;
+        // Always return a lower case list
+        return treeTypes.stream().map(String::toLowerCase).collect(Collectors.toList());
     }
 
     public boolean isEnabled() {

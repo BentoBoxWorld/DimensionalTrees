@@ -7,8 +7,6 @@ import world.bentobox.dimensionaltrees.events.TreeGrowEvent;
 
 public final class DimensionalTrees extends Addon {
 
-    private static DimensionalTrees instance;
-
     private Settings settings;
 
     @Override
@@ -23,12 +21,13 @@ public final class DimensionalTrees extends Addon {
     public void onEnable() {
         // Plugin startup logic
         new AdminCommand(this);
-        registerEvents();
+        // Register listener
+        registerListener(new TreeGrowEvent(this));
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        // Nothing to do here
     }
 
     private void loadSettings() {
@@ -50,13 +49,5 @@ public final class DimensionalTrees extends Addon {
 
     public Settings getSettings() {
         return settings;
-    }
-
-    public static DimensionalTrees getInstance() {
-        return instance;
-    }
-
-    private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new TreeGrowEvent(this, getPlugin()), getPlugin());
     }
 }
