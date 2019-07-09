@@ -49,7 +49,7 @@ public class TreeGrowEvent implements Listener {
             return;
         }
         // Verify the sapling is in the settings list
-        if (!treeTypes().contains(e.getLocation().getBlock().getType().name().replace("", "_SAPLING").toLowerCase())) {
+        if (!treeTypes().contains(e.getLocation().getBlock().getType().name().replace("_SAPLING", "").toLowerCase())) {
             return;
         }
 
