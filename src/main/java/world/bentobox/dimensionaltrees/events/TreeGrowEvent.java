@@ -31,16 +31,13 @@ public class TreeGrowEvent implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTreeGrow(StructureGrowEvent e) {
-
         if (!isEnabled()) {
             return;
         }
-
         // Don't do anything if we're not in the right place.
         if (!addon.getPlugin().getIWM().inWorld(e.getWorld())) {
             return;
         }
-
         // Verify settings
         if (endLeaves() == null || endLogs() == null || netherLeaves() == null || netherLogs() == null
                 || Material.matchMaterial(endLeaves()) == null || Material.matchMaterial(endLogs()) == null
@@ -49,10 +46,9 @@ public class TreeGrowEvent implements Listener {
             return;
         }
         // Verify the sapling is in the settings list
-        if (!treeTypes().contains(e.getLocation().getBlock().getType().name().replace("", "_SAPLING").toLowerCase())) {
+        if (!treeTypes().contains(e.getLocation().getBlock().getType().name().replace("_SAPLING", "").toLowerCase())) {
             return;
         }
-
         try {
             if (e.getWorld().getEnvironment().equals(World.Environment.NETHER) && isNetherEnabled()) {
                 // Modify everything!

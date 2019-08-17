@@ -1,11 +1,11 @@
 package world.bentobox.dimensionaltrees.commands;
 
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.dimensionaltrees.DimensionalTrees;
-
-import java.util.List;
 
 public class AdminCommand extends CompositeCommand {
 

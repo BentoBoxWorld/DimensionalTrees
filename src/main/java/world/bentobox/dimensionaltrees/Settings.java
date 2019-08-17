@@ -1,12 +1,14 @@
 package world.bentobox.dimensionaltrees;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
-import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import world.bentobox.bentobox.api.configuration.StoreAt;
 
 @StoreAt(filename="config.yml", path="addons/DimensionalTrees") // Explicitly call out what name this should have.
 @ConfigComment("DimensionalTrees Configuration [version]")

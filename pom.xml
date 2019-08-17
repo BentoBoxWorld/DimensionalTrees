@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>world.bentobox</groupId>
     <artifactId>dimensionaltrees</artifactId>
-   <version>${revision}</version>
+    <version>${revision}</version>
     <packaging>jar</packaging>
 
     <name>DimensionalTrees</name>
 
     <description>Add different trees to the other dimensions</description>
-    
+
     <url>https://github.com/BentoBoxWorld/DimensionalTrees</url>
     <inceptionYear>2019</inceptionYear>
-    
-<scm>
+
+    <scm>
         <connection>scm:git:https://github.com/BentoBoxWorld/DimensionalTrees.git</connection>
         <developerConnection>scm:git:git@github.com:BentoBoxWorld/DimensionalTrees.git</developerConnection>
         <url>https://github.com/BentoBoxWorld/DimensionalTrees</url>
@@ -50,11 +50,11 @@
         <powermock.version>1.7.4</powermock.version>
         <!-- More visible way how to change dependency versions -->
         <spigot.version>1.14.3-R0.1-SNAPSHOT</spigot.version>
-        <bentobox.version>1.6.0-SNAPSHOT</bentobox.version>
+        <bentobox.version>1.6.0</bentobox.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- This allows to change between versions and snapshots. -->
-        <build.version>1.0.1</build.version>
+        <build.version>1.6.0</build.version>
         <build.number>-LOCAL</build.number>
     </properties>
 
