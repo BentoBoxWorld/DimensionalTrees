@@ -28,7 +28,7 @@ public class AdminCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
             return false;
         }
-        return false;
+        return true;
     }
 
 }

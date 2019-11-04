@@ -25,22 +25,22 @@ public class Settings implements ConfigObject {
     @ConfigComment("")
     @ConfigComment("The block that will be the leaves on the End")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.leaves")
-    private String end_leaves = "end_stone";
+    private String endLeaves = "end_stone";
 
     @ConfigComment("")
     @ConfigComment("The block that will be the logs on the End")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.logs")
-    private String end_logs = "purpur_block";
+    private String endLogs = "purpur_block";
 
     @ConfigComment("")
     @ConfigComment("The block that will be the leaves on the Nether")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.leaves")
-    private String nether_leaves = "glowstone";
+    private String netherLeaves = "glowstone";
 
     @ConfigComment("")
     @ConfigComment("The block that will be the logs on the Nether")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.logs")
-    private String nether_logs = "gravel";
+    private String netherLogs = "gravel";
 
     /* Options */
     @ConfigComment("")
@@ -57,19 +57,19 @@ public class Settings implements ConfigObject {
     @ConfigComment("")
     @ConfigComment("Enable/disable the End trees.")
     @ConfigEntry(path = "dimensionaltrees.options.end_trees")
-    private boolean end_enabled = true;
+    private boolean endEnabled = true;
 
     @ConfigComment("")
     @ConfigComment("Enable/disable the Nether Trees.")
     @ConfigEntry(path = "dimensionaltrees.options.nether_trees")
-    private boolean nether_enabled = true;
+    private boolean netherEnabled = true;
 
     @ConfigComment("")
     @ConfigComment("List of the saplings/trees that will be transformed.")
     @ConfigComment("Add a # before to disable and remove the # to enable.")
     @ConfigComment("Like the default settings.")
     @ConfigEntry(path = "dimensionaltrees.options.tree_types")
-    private List<String> treeTypes = new ArrayList<String>(Arrays.asList("oak", "acacia", "birch"));
+    private List<String> treeTypes = new ArrayList<>(Arrays.asList("oak", "acacia", "birch"));
 
 
     /* Set Config */
@@ -77,20 +77,20 @@ public class Settings implements ConfigObject {
         this.adminCommand = adminCommand;
     }
 
-    public void setEnd_leaves(String end_leaves) {
-        this.end_leaves = end_leaves;
+    public void setEndLeaves(String end_leaves) {
+        this.endLeaves = end_leaves;
     }
 
-    public void setEnd_logs(String end_logs) {
-        this.end_logs = end_logs;
+    public void setEndLogs(String end_logs) {
+        this.endLogs = end_logs;
     }
 
-    public void setNether_leaves(String nether_leaves) {
-        this.nether_leaves = nether_leaves;
+    public void setNetherLeaves(String nether_leaves) {
+        this.netherLeaves = nether_leaves;
     }
 
-    public void setNether_logs(String nether_logs) {
-        this.nether_logs = nether_logs;
+    public void setNetherLogs(String nether_logs) {
+        this.netherLogs = nether_logs;
     }
 
     public void setSendLog(boolean sendLog) {
@@ -105,12 +105,12 @@ public class Settings implements ConfigObject {
         this.enabled = enabled;
     }
 
-    public void setEnd_enabled(boolean end_enabled) {
-        this.end_enabled = end_enabled;
+    public void setEndEnabled(boolean end_enabled) {
+        this.endEnabled = end_enabled;
     }
 
-    public void setNether_enabled(boolean nether_enabled) {
-        this.nether_enabled = nether_enabled;
+    public void setNetherEnabled(boolean nether_enabled) {
+        this.netherEnabled = nether_enabled;
     }
 
 
@@ -119,20 +119,20 @@ public class Settings implements ConfigObject {
         return adminCommand;
     }
 
-    public String getEnd_leaves() {
-        return end_leaves;
+    public String getEndLeaves() {
+        return endLeaves;
     }
 
-    public String getEnd_logs() {
-        return end_logs;
+    public String getEndLogs() {
+        return endLogs;
     }
 
-    public String getNether_leaves() {
-        return nether_leaves;
+    public String getNetherLeaves() {
+        return netherLeaves;
     }
 
-    public String getNether_logs() {
-        return nether_logs;
+    public String getNetherLogs() {
+        return netherLogs;
     }
 
     public boolean isSendLog() {
@@ -148,11 +148,11 @@ public class Settings implements ConfigObject {
         return enabled;
     }
 
-    public boolean isEnd_enabled() {
-        return end_enabled;
+    public boolean isEndEnabled() {
+        return endEnabled;
     }
 
-    public boolean isNether_enabled() {
-        return nether_enabled;
+    public boolean isNetherEnabled() {
+        return netherEnabled;
     }
 }

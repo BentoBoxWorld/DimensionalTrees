@@ -87,19 +87,19 @@ public class TreeGrowEvent implements Listener {
     }
 
     private String endLeaves() {
-        return addon.getSettings().getEnd_leaves();
+        return addon.getSettings().getEndLeaves();
     }
 
     private String endLogs() {
-        return addon.getSettings().getEnd_logs();
+        return addon.getSettings().getEndLogs();
     }
 
     private String netherLeaves() {
-        return addon.getSettings().getNether_leaves();
+        return addon.getSettings().getNetherLeaves();
     }
 
     private String netherLogs() {
-        return addon.getSettings().getNether_logs();
+        return addon.getSettings().getNetherLogs();
     }
 
     private boolean sendLog() {
@@ -115,11 +115,11 @@ public class TreeGrowEvent implements Listener {
     }
 
     private boolean isEndEnabled() {
-        return addon.getSettings().isEnd_enabled();
+        return addon.getSettings().isEndEnabled();
     }
 
     private boolean isNetherEnabled() {
-        return addon.getSettings().isNether_enabled();
+        return addon.getSettings().isNetherEnabled();
     }
 
 }
