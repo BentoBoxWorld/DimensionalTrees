@@ -1,6 +1,6 @@
 name: DimensionalTrees
 main: world.bentobox.dimensionaltrees.DimensionalTrees
-version: ${version}
+version: ${version}${build.number}
 icon: DARK_OAK_SAPLING
 
 prefix: DimensionalTrees
