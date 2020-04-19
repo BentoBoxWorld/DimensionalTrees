@@ -7,7 +7,7 @@ prefix: DimensionalTrees
 
 authors: [AwakenedRedstone, tastybento, Poslovitch]
 
-softdepend: BSkyBlock
+softdepend: BSkyBlock, AcidIsland, SkyGrid, CaveBlock, AOneBlock
 
 permissions:
   admin.dimensionaltrees.*:
