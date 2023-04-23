@@ -15,12 +15,12 @@ public final class DimensionalTrees extends Addon {
         saveDefaultConfig();
         // Load settings from config.yml. This will check if there are any issues with it too.
         loadSettings();
+        // Register command
+        new AdminCommand(this);
     }
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        new AdminCommand(this);
         // Register listener
         registerListener(new TreeGrowEvent(this));
     }
