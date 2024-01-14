@@ -1,4 +1,6 @@
+---
 dimensionaltrees:
-  invalid-material: §cKhông thể mọc cây. Có vật liệu không hợp lệ.
-  reloaded: §aDimensionalTrees đã nạp lại.
+  invalid-material: "&c Không thể trồng cây. Một tài liệu không hợp lệ đã được phát
+    hiện."
+  reloaded: "&a DimensionalTrees đã được tải lại."
   error: lỗi
