@@ -1,4 +1,5 @@
+---
 dimensionaltrees:
-  invalid-material: "§cNem lehet megnöveszteni a fát. Hibás alapanyag található benne."
-  reloaded: "§aA DimensionalTrees újratöltve."
-  error: "hiba"
+  invalid-material: "&c Nem lehet kinőni a fát. Érvénytelen anyagot észleltünk."
+  reloaded: "&a DimensionalTrees újratöltve."
+  error: hiba
