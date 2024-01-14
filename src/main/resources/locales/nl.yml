@@ -1,0 +1,5 @@
+---
+dimensionaltrees:
+  invalid-material: "&c Kan de boom niet laten groeien. Er is ongeldig materiaal gedetecteerd."
+  reloaded: "&a DimensionalTrees is opnieuw geladen."
+  error: fout
