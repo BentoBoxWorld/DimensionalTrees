@@ -3,6 +3,7 @@ package world.bentobox.dimensionaltrees;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,80 +26,96 @@ public class Settings implements ConfigObject {
 
     /* Blocks */
     @ConfigComment("")
-    @ConfigComment("The block that will be the leaves on the End")
+    @ConfigComment("The blocks that will be the leaves in the End.")
+    @ConfigComment("Each entry is a material name with a weight (percentage, 1-100).")
+    @ConfigComment("Weights > 100 in total are scaled proportionally.")
+    @ConfigComment("Weights < 100 in total fill the remainder with AIR.")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.leaves")
-    private String endLeaves = "end_stone";
+    private Map<String, Integer> endLeaves = new LinkedHashMap<>(Map.of("end_stone", 100));
 
     @ConfigComment("")
-    @ConfigComment("The block that will be the logs on the End")
+    @ConfigComment("The blocks that will be the logs in the End.")
+    @ConfigComment("Each entry is a material name with a weight (percentage, 1-100).")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.logs")
-    private String endLogs = "purpur_block";
+    private Map<String, Integer> endLogs = new LinkedHashMap<>(Map.of("purpur_block", 100));
 
     @ConfigComment("")
     @ConfigComment("Per-tree-type leaf overrides for the End dimension.")
     @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a tree type is not listed here, the global 'end.leaves' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.per-tree.leaves")
-    private Map<String, String> endLeavesPerTree = new HashMap<>();
+    private Map<String, Map<String, Integer>> endLeavesPerTree = new HashMap<>();
 
     @ConfigComment("")
     @ConfigComment("Per-tree-type log overrides for the End dimension.")
     @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a tree type is not listed here, the global 'end.logs' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.per-tree.logs")
-    private Map<String, String> endLogsPerTree = new HashMap<>();
+    private Map<String, Map<String, Integer>> endLogsPerTree = new HashMap<>();
 
     @ConfigComment("")
     @ConfigComment("Per-gamemode leaf overrides for the End dimension.")
     @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a gamemode is not listed here, the global 'end.leaves' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.per-gamemode.leaves")
-    private Map<String, String> endLeavesPerGamemode = new HashMap<>();
+    private Map<String, Map<String, Integer>> endLeavesPerGamemode = new HashMap<>();
 
     @ConfigComment("")
     @ConfigComment("Per-gamemode log overrides for the End dimension.")
     @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a gamemode is not listed here, the global 'end.logs' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.end.per-gamemode.logs")
-    private Map<String, String> endLogsPerGamemode = new HashMap<>();
+    private Map<String, Map<String, Integer>> endLogsPerGamemode = new HashMap<>();
 
     @ConfigComment("")
-    @ConfigComment("The block that will be the leaves on the Nether")
+    @ConfigComment("The blocks that will be the leaves in the Nether.")
+    @ConfigComment("Each entry is a material name with a weight (percentage, 1-100).")
+    @ConfigComment("Weights > 100 in total are scaled proportionally.")
+    @ConfigComment("Weights < 100 in total fill the remainder with AIR.")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.leaves")
-    private String netherLeaves = "glowstone";
+    private Map<String, Integer> netherLeaves = new LinkedHashMap<>(Map.of("glowstone", 100));
 
     @ConfigComment("")
-    @ConfigComment("The block that will be the logs on the Nether")
+    @ConfigComment("The blocks that will be the logs in the Nether.")
+    @ConfigComment("Each entry is a material name with a weight (percentage, 1-100).")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.logs")
-    private String netherLogs = "gravel";
+    private Map<String, Integer> netherLogs = new LinkedHashMap<>(Map.of("gravel", 100));
 
     @ConfigComment("")
     @ConfigComment("Per-tree-type leaf overrides for the Nether dimension.")
     @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a tree type is not listed here, the global 'nether.leaves' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-tree.leaves")
-    private Map<String, String> netherLeavesPerTree = new HashMap<>();
+    private Map<String, Map<String, Integer>> netherLeavesPerTree = new HashMap<>();
 
     @ConfigComment("")
     @ConfigComment("Per-tree-type log overrides for the Nether dimension.")
     @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a tree type is not listed here, the global 'nether.logs' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-tree.logs")
-    private Map<String, String> netherLogsPerTree = new HashMap<>();
+    private Map<String, Map<String, Integer>> netherLogsPerTree = new HashMap<>();
 
     @ConfigComment("")
     @ConfigComment("Per-gamemode leaf overrides for the Nether dimension.")
     @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a gamemode is not listed here, the global 'nether.leaves' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-gamemode.leaves")
-    private Map<String, String> netherLeavesPerGamemode = new HashMap<>();
+    private Map<String, Map<String, Integer>> netherLeavesPerGamemode = new HashMap<>();
 
     @ConfigComment("")
     @ConfigComment("Per-gamemode log overrides for the Nether dimension.")
     @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("Values are weighted material maps (material: weight).")
     @ConfigComment("If a gamemode is not listed here, the global 'nether.logs' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-gamemode.logs")
-    private Map<String, String> netherLogsPerGamemode = new HashMap<>();
+    private Map<String, Map<String, Integer>> netherLogsPerGamemode = new HashMap<>();
 
     /* Options */
     @ConfigComment("")
@@ -135,51 +152,51 @@ public class Settings implements ConfigObject {
         this.adminCommand = adminCommand;
     }
 
-    public void setEndLeaves(String end_leaves) {
-        this.endLeaves = end_leaves;
+    public void setEndLeaves(Map<String, Integer> endLeaves) {
+        this.endLeaves = endLeaves;
     }
 
-    public void setEndLogs(String end_logs) {
-        this.endLogs = end_logs;
+    public void setEndLogs(Map<String, Integer> endLogs) {
+        this.endLogs = endLogs;
     }
 
-    public void setNetherLeaves(String nether_leaves) {
-        this.netherLeaves = nether_leaves;
+    public void setNetherLeaves(Map<String, Integer> netherLeaves) {
+        this.netherLeaves = netherLeaves;
     }
 
-    public void setNetherLogs(String nether_logs) {
-        this.netherLogs = nether_logs;
+    public void setNetherLogs(Map<String, Integer> netherLogs) {
+        this.netherLogs = netherLogs;
     }
 
-    public void setEndLeavesPerTree(Map<String, String> endLeavesPerTree) {
+    public void setEndLeavesPerTree(Map<String, Map<String, Integer>> endLeavesPerTree) {
         this.endLeavesPerTree = endLeavesPerTree;
     }
 
-    public void setEndLogsPerTree(Map<String, String> endLogsPerTree) {
+    public void setEndLogsPerTree(Map<String, Map<String, Integer>> endLogsPerTree) {
         this.endLogsPerTree = endLogsPerTree;
     }
 
-    public void setNetherLeavesPerTree(Map<String, String> netherLeavesPerTree) {
+    public void setNetherLeavesPerTree(Map<String, Map<String, Integer>> netherLeavesPerTree) {
         this.netherLeavesPerTree = netherLeavesPerTree;
     }
 
-    public void setNetherLogsPerTree(Map<String, String> netherLogsPerTree) {
+    public void setNetherLogsPerTree(Map<String, Map<String, Integer>> netherLogsPerTree) {
         this.netherLogsPerTree = netherLogsPerTree;
     }
 
-    public void setEndLeavesPerGamemode(Map<String, String> endLeavesPerGamemode) {
+    public void setEndLeavesPerGamemode(Map<String, Map<String, Integer>> endLeavesPerGamemode) {
         this.endLeavesPerGamemode = endLeavesPerGamemode;
     }
 
-    public void setEndLogsPerGamemode(Map<String, String> endLogsPerGamemode) {
+    public void setEndLogsPerGamemode(Map<String, Map<String, Integer>> endLogsPerGamemode) {
         this.endLogsPerGamemode = endLogsPerGamemode;
     }
 
-    public void setNetherLeavesPerGamemode(Map<String, String> netherLeavesPerGamemode) {
+    public void setNetherLeavesPerGamemode(Map<String, Map<String, Integer>> netherLeavesPerGamemode) {
         this.netherLeavesPerGamemode = netherLeavesPerGamemode;
     }
 
-    public void setNetherLogsPerGamemode(Map<String, String> netherLogsPerGamemode) {
+    public void setNetherLogsPerGamemode(Map<String, Map<String, Integer>> netherLogsPerGamemode) {
         this.netherLogsPerGamemode = netherLogsPerGamemode;
     }
 
@@ -209,51 +226,51 @@ public class Settings implements ConfigObject {
         return adminCommand;
     }
 
-    public String getEndLeaves() {
+    public Map<String, Integer> getEndLeaves() {
         return endLeaves;
     }
 
-    public String getEndLogs() {
+    public Map<String, Integer> getEndLogs() {
         return endLogs;
     }
 
-    public String getNetherLeaves() {
+    public Map<String, Integer> getNetherLeaves() {
         return netherLeaves;
     }
 
-    public String getNetherLogs() {
+    public Map<String, Integer> getNetherLogs() {
         return netherLogs;
     }
 
-    public Map<String, String> getEndLeavesPerTree() {
+    public Map<String, Map<String, Integer>> getEndLeavesPerTree() {
         return endLeavesPerTree;
     }
 
-    public Map<String, String> getEndLogsPerTree() {
+    public Map<String, Map<String, Integer>> getEndLogsPerTree() {
         return endLogsPerTree;
     }
 
-    public Map<String, String> getNetherLeavesPerTree() {
+    public Map<String, Map<String, Integer>> getNetherLeavesPerTree() {
         return netherLeavesPerTree;
     }
 
-    public Map<String, String> getNetherLogsPerTree() {
+    public Map<String, Map<String, Integer>> getNetherLogsPerTree() {
         return netherLogsPerTree;
     }
 
-    public Map<String, String> getEndLeavesPerGamemode() {
+    public Map<String, Map<String, Integer>> getEndLeavesPerGamemode() {
         return endLeavesPerGamemode;
     }
 
-    public Map<String, String> getEndLogsPerGamemode() {
+    public Map<String, Map<String, Integer>> getEndLogsPerGamemode() {
         return endLogsPerGamemode;
     }
 
-    public Map<String, String> getNetherLeavesPerGamemode() {
+    public Map<String, Map<String, Integer>> getNetherLeavesPerGamemode() {
         return netherLeavesPerGamemode;
     }
 
-    public Map<String, String> getNetherLogsPerGamemode() {
+    public Map<String, Map<String, Integer>> getNetherLogsPerGamemode() {
         return netherLogsPerGamemode;
     }
 

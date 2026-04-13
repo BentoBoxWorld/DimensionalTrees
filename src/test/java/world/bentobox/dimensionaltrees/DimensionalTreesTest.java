@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -40,11 +41,15 @@ class DimensionalTreesTest extends CommonTestSetup {
                         admin: "dtrees dimensionaltrees dt"
                       blocks:
                         end:
-                          leaves: end_stone
-                          logs: purpur_block
+                          leaves:
+                            end_stone: 100
+                          logs:
+                            purpur_block: 100
                         nether:
-                          leaves: glowstone
-                          logs: gravel
+                          leaves:
+                            glowstone: 100
+                          logs:
+                            gravel: 100
                       options:
                         sendlog: true
                         enable_addon: true
@@ -137,10 +142,10 @@ class DimensionalTreesTest extends CommonTestSetup {
         Settings s = addon.getSettings();
         assertNotNull(s);
         assertEquals("dtrees dimensionaltrees dt", s.getAdminCommand());
-        assertEquals("end_stone", s.getEndLeaves());
-        assertEquals("purpur_block", s.getEndLogs());
-        assertEquals("glowstone", s.getNetherLeaves());
-        assertEquals("gravel", s.getNetherLogs());
+        assertEquals(Map.of("end_stone", 100), s.getEndLeaves());
+        assertEquals(Map.of("purpur_block", 100), s.getEndLogs());
+        assertEquals(Map.of("glowstone", 100), s.getNetherLeaves());
+        assertEquals(Map.of("gravel", 100), s.getNetherLogs());
     }
 
     @Test
