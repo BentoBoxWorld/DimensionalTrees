@@ -1,8 +1,11 @@
 package world.bentobox.dimensionaltrees.events;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
@@ -40,8 +43,10 @@ public class TreeGrowEvent implements Listener {
         }
         // Verify settings
         if (endLeaves() == null || endLogs() == null || netherLeaves() == null || netherLogs() == null
-                || Material.matchMaterial(endLeaves()) == null || Material.matchMaterial(endLogs()) == null
-                || Material.matchMaterial(netherLeaves()) == null || Material.matchMaterial(netherLogs()) == null) {
+                || Registry.MATERIAL.get(NamespacedKey.minecraft(endLeaves().toLowerCase(Locale.ENGLISH))) == null
+                || Registry.MATERIAL.get(NamespacedKey.minecraft(endLogs().toLowerCase(Locale.ENGLISH))) == null
+                || Registry.MATERIAL.get(NamespacedKey.minecraft(netherLeaves().toLowerCase(Locale.ENGLISH))) == null
+                || Registry.MATERIAL.get(NamespacedKey.minecraft(netherLogs().toLowerCase(Locale.ENGLISH))) == null) {
             warning(e);
             return;
         }
@@ -54,18 +59,18 @@ public class TreeGrowEvent implements Listener {
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
-                        b.setType(Material.matchMaterial(netherLogs()));
+                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(netherLogs().toLowerCase(Locale.ENGLISH))));
                     } else if (Tag.LEAVES.isTagged(b.getType())) {
-                        b.setType(Material.matchMaterial(netherLeaves()));
+                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(netherLeaves().toLowerCase(Locale.ENGLISH))));
                     }
                 }
             } else if (e.getWorld().getEnvironment().equals(World.Environment.THE_END) && isEndEnabled()) {
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
-                        b.setType(Material.matchMaterial(endLogs()));
+                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(endLogs().toLowerCase(Locale.ENGLISH))));
                     } else if (Tag.LEAVES.isTagged(b.getType())) {
-                        b.setType(Material.matchMaterial(endLeaves()));
+                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(endLeaves().toLowerCase(Locale.ENGLISH))));
                     }
                 }
             }
