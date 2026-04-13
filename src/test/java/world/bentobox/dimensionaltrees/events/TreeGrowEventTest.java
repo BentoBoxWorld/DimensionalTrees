@@ -8,7 +8,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -54,6 +56,10 @@ class TreeGrowEventTest extends CommonTestSetup {
         when(settings.getNetherLogs()).thenReturn("gravel");
         when(settings.getTreeTypes()).thenReturn(Arrays.asList("oak", "acacia", "birch"));
         when(settings.isSendLog()).thenReturn(false);
+        when(settings.getEndLeavesPerTree()).thenReturn(new HashMap<>());
+        when(settings.getEndLogsPerTree()).thenReturn(new HashMap<>());
+        when(settings.getNetherLeavesPerTree()).thenReturn(new HashMap<>());
+        when(settings.getNetherLogsPerTree()).thenReturn(new HashMap<>());
 
         // Sapling block at the event location
         when(location.getBlock()).thenReturn(saplingBlock);
@@ -200,5 +206,120 @@ class TreeGrowEventTest extends CommonTestSetup {
     void testEmptyBlockListDoesNotThrow() {
         StructureGrowEvent event = makeEvent(World.Environment.NETHER, Collections.emptyList());
         listener.onTreeGrow(event);
+    }
+
+    // ── Per-tree overrides ─────────────────────────────────────────────────
+
+    @Test
+    void testNetherLogPerTreeOverrideUsed() {
+        Map<String, String> logsOverride = new HashMap<>();
+        logsOverride.put("oak", "netherrack");
+        when(settings.getNetherLogsPerTree()).thenReturn(logsOverride);
+
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.NETHERRACK);
+    }
+
+    @Test
+    void testNetherLeavesPerTreeOverrideUsed() {
+        Map<String, String> leavesOverride = new HashMap<>();
+        leavesOverride.put("oak", "soul_sand");
+        when(settings.getNetherLeavesPerTree()).thenReturn(leavesOverride);
+
+        BlockState leafState = mock(BlockState.class);
+        when(leafState.getType()).thenReturn(Material.OAK_LEAVES);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(leafState));
+        listener.onTreeGrow(event);
+        verify(leafState).setType(Material.SOUL_SAND);
+    }
+
+    @Test
+    void testEndLogPerTreeOverrideUsed() {
+        Map<String, String> logsOverride = new HashMap<>();
+        logsOverride.put("oak", "obsidian");
+        when(settings.getEndLogsPerTree()).thenReturn(logsOverride);
+
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.THE_END, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.OBSIDIAN);
+    }
+
+    @Test
+    void testEndLeavesPerTreeOverrideUsed() {
+        Map<String, String> leavesOverride = new HashMap<>();
+        leavesOverride.put("oak", "grass_block");
+        when(settings.getEndLeavesPerTree()).thenReturn(leavesOverride);
+
+        BlockState leafState = mock(BlockState.class);
+        when(leafState.getType()).thenReturn(Material.OAK_LEAVES);
+        StructureGrowEvent event = makeEvent(World.Environment.THE_END, List.of(leafState));
+        listener.onTreeGrow(event);
+        verify(leafState).setType(Material.GRASS_BLOCK);
+    }
+
+    @Test
+    void testPerTreeOverrideDoesNotAffectOtherTreeTypes() {
+        // Override only affects oak; acacia should still use global gravel
+        Map<String, String> logsOverride = new HashMap<>();
+        logsOverride.put("oak", "netherrack");
+        when(settings.getNetherLogsPerTree()).thenReturn(logsOverride);
+        when(settings.getTreeTypes()).thenReturn(Arrays.asList("oak", "acacia", "birch"));
+        when(saplingBlock.getType()).thenReturn(Material.ACACIA_SAPLING);
+
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.ACACIA_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.GRAVEL);
+    }
+
+    @Test
+    void testInvalidPerTreeOverrideFallsBackToGlobal() {
+        // Override has invalid material; should fall back to global "gravel"
+        Map<String, String> logsOverride = new HashMap<>();
+        logsOverride.put("oak", "not_a_real_material");
+        when(settings.getNetherLogsPerTree()).thenReturn(logsOverride);
+
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.GRAVEL);
+    }
+
+    // ── resolveMaterial unit tests ─────────────────────────────────────────
+
+    @Test
+    void testResolveMaterialReturnsOverrideWhenValid() {
+        Map<String, String> map = new HashMap<>();
+        map.put("oak", "netherrack");
+        String result = listener.resolveMaterial(map, "oak", "gravel");
+        org.junit.jupiter.api.Assertions.assertEquals("netherrack", result);
+    }
+
+    @Test
+    void testResolveMaterialReturnsGlobalWhenNoOverride() {
+        Map<String, String> map = new HashMap<>();
+        String result = listener.resolveMaterial(map, "oak", "gravel");
+        org.junit.jupiter.api.Assertions.assertEquals("gravel", result);
+    }
+
+    @Test
+    void testResolveMaterialReturnsGlobalWhenMapIsNull() {
+        String result = listener.resolveMaterial(null, "oak", "gravel");
+        org.junit.jupiter.api.Assertions.assertEquals("gravel", result);
+    }
+
+    @Test
+    void testResolveMaterialReturnsGlobalWhenOverrideInvalid() {
+        Map<String, String> map = new HashMap<>();
+        map.put("oak", "not_real");
+        String result = listener.resolveMaterial(map, "oak", "gravel");
+        org.junit.jupiter.api.Assertions.assertEquals("gravel", result);
     }
 }

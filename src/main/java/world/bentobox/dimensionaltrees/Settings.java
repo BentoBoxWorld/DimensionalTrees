@@ -2,7 +2,9 @@ package world.bentobox.dimensionaltrees;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.configuration.ConfigComment;
@@ -33,6 +35,20 @@ public class Settings implements ConfigObject {
     private String endLogs = "purpur_block";
 
     @ConfigComment("")
+    @ConfigComment("Per-tree-type leaf overrides for the End dimension.")
+    @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("If a tree type is not listed here, the global 'end.leaves' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.end.per-tree.leaves")
+    private Map<String, String> endLeavesPerTree = new HashMap<>();
+
+    @ConfigComment("")
+    @ConfigComment("Per-tree-type log overrides for the End dimension.")
+    @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("If a tree type is not listed here, the global 'end.logs' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.end.per-tree.logs")
+    private Map<String, String> endLogsPerTree = new HashMap<>();
+
+    @ConfigComment("")
     @ConfigComment("The block that will be the leaves on the Nether")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.leaves")
     private String netherLeaves = "glowstone";
@@ -41,6 +57,20 @@ public class Settings implements ConfigObject {
     @ConfigComment("The block that will be the logs on the Nether")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.logs")
     private String netherLogs = "gravel";
+
+    @ConfigComment("")
+    @ConfigComment("Per-tree-type leaf overrides for the Nether dimension.")
+    @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("If a tree type is not listed here, the global 'nether.leaves' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-tree.leaves")
+    private Map<String, String> netherLeavesPerTree = new HashMap<>();
+
+    @ConfigComment("")
+    @ConfigComment("Per-tree-type log overrides for the Nether dimension.")
+    @ConfigComment("Keys are tree type names (oak, spruce, birch, jungle, acacia, dark_oak).")
+    @ConfigComment("If a tree type is not listed here, the global 'nether.logs' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-tree.logs")
+    private Map<String, String> netherLogsPerTree = new HashMap<>();
 
     /* Options */
     @ConfigComment("")
@@ -93,6 +123,22 @@ public class Settings implements ConfigObject {
         this.netherLogs = nether_logs;
     }
 
+    public void setEndLeavesPerTree(Map<String, String> endLeavesPerTree) {
+        this.endLeavesPerTree = endLeavesPerTree;
+    }
+
+    public void setEndLogsPerTree(Map<String, String> endLogsPerTree) {
+        this.endLogsPerTree = endLogsPerTree;
+    }
+
+    public void setNetherLeavesPerTree(Map<String, String> netherLeavesPerTree) {
+        this.netherLeavesPerTree = netherLeavesPerTree;
+    }
+
+    public void setNetherLogsPerTree(Map<String, String> netherLogsPerTree) {
+        this.netherLogsPerTree = netherLogsPerTree;
+    }
+
     public void setSendLog(boolean sendLog) {
         this.sendLog = sendLog;
     }
@@ -133,6 +179,22 @@ public class Settings implements ConfigObject {
 
     public String getNetherLogs() {
         return netherLogs;
+    }
+
+    public Map<String, String> getEndLeavesPerTree() {
+        return endLeavesPerTree;
+    }
+
+    public Map<String, String> getEndLogsPerTree() {
+        return endLogsPerTree;
+    }
+
+    public Map<String, String> getNetherLeavesPerTree() {
+        return netherLeavesPerTree;
+    }
+
+    public Map<String, String> getNetherLogsPerTree() {
+        return netherLogsPerTree;
     }
 
     public boolean isSendLog() {
