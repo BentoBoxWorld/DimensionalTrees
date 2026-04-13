@@ -7,19 +7,63 @@ dimensionaltrees:
   blocks:
     end:
 
-      # The block that will be the leaves in the End
+      # The block that will be the leaves in the End (global default)
       leaves: end_stone
 
-      # The block that will be the logs in the End
+      # The block that will be the logs in the End (global default)
       logs: purpur_block
+
+      # Per-tree-type overrides for the End dimension.
+      # Keys are tree type names: oak, spruce, birch, jungle, acacia, dark_oak
+      # If a tree type is listed here it overrides the global 'end.leaves' / 'end.logs' values.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-tree:
+        # Uncomment and set individual tree types to override the global 'end.leaves' value.
+        leaves:
+        #  oak: end_stone
+        #  spruce: purpur_block
+        #  birch: end_stone
+        #  jungle: purpur_block
+        #  acacia: end_stone
+        #  dark_oak: purpur_block
+        # Uncomment and set individual tree types to override the global 'end.logs' value.
+        logs:
+        #  oak: purpur_block
+        #  spruce: end_stone
+        #  birch: purpur_block
+        #  jungle: end_stone
+        #  acacia: purpur_block
+        #  dark_oak: end_stone
 
     nether:
 
-      # The block that will be the leaves in the Nether
+      # The block that will be the leaves in the Nether (global default)
       leaves: glowstone
 
-      # The block that will be the logs in the Nether
+      # The block that will be the logs in the Nether (global default)
       logs: gravel
+
+      # Per-tree-type overrides for the Nether dimension.
+      # Keys are tree type names: oak, spruce, birch, jungle, acacia, dark_oak
+      # If a tree type is listed here it overrides the global 'nether.leaves' / 'nether.logs' values.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-tree:
+        # Uncomment and set individual tree types to override the global 'nether.leaves' value.
+        leaves:
+        #  oak: glowstone
+        #  spruce: netherrack
+        #  birch: glowstone
+        #  jungle: soul_sand
+        #  acacia: glowstone
+        #  dark_oak: netherrack
+        # Uncomment and set individual tree types to override the global 'nether.logs' value.
+        logs:
+        #  oak: gravel
+        #  spruce: netherrack
+        #  birch: gravel
+        #  jungle: soul_sand
+        #  acacia: gravel
+        #  dark_oak: netherrack
 
   messages:
 
