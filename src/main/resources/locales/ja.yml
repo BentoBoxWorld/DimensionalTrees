@@ -1,5 +1,5 @@
 ---
 dimensionaltrees:
-  invalid-material: "&c 木を成長させることができません。無効なマテリアルが検出されました。"
-  reloaded: "&a DimensionalTrees がリロードされました。"
+  invalid-material: "<red>木を成長させることができません。無効なマテリアルが検出されました。"
+  reloaded: "<green>DimensionalTrees がリロードされました。"
   error: エラー

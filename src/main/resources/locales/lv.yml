@@ -1,5 +1,5 @@
 ---
 dimensionaltrees:
-  invalid-material: "&c Nevar izaudzēt koku. Ir konstatēts nederīgs materiāls."
-  reloaded: "&a DimensionalTrees ir atkārtoti ielādēta."
+  invalid-material: "<red>Nevar izaudzēt koku. Ir konstatēts nederīgs materiāls."
+  reloaded: "<green>DimensionalTrees ir atkārtoti ielādēta."
   error: kļūda

@@ -1,5 +1,5 @@
 ---
 dimensionaltrees:
-  invalid-material: "&c Nem lehet kinőni a fát. Érvénytelen anyagot észleltünk."
-  reloaded: "&a DimensionalTrees újratöltve."
+  invalid-material: "<red>Nem lehet kinőni a fát. Érvénytelen anyagot észleltünk."
+  reloaded: "<green>DimensionalTrees újratöltve."
   error: hiba
