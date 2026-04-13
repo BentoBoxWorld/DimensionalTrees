@@ -18,7 +18,7 @@ import world.bentobox.dimensionaltrees.DimensionalTrees;
 
 public class TreeGrowEvent implements Listener {
 
-    private DimensionalTrees addon;
+    private final DimensionalTrees addon;
 
     public TreeGrowEvent(@NonNull DimensionalTrees addon) {
         this.addon = addon;

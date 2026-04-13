@@ -76,8 +76,8 @@ dimensionaltrees.admin.*          # Access to all DimensionalTrees admin command
 
 The admin command is available as `/dtrees`, `/dimensionaltrees`, or `/dt`.
 
-| Command | Description |
-|---|---|
+| Command          | Description                                            |
+|------------------|--------------------------------------------------------|
 | `/dtrees reload` | Reloads the `config.yml` without restarting the server |
 
 ---
