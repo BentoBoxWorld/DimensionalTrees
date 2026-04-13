@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -22,6 +23,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.dimensionaltrees.CommonTestSetup;
 import world.bentobox.dimensionaltrees.DimensionalTrees;
 import world.bentobox.dimensionaltrees.Settings;
@@ -60,6 +63,10 @@ class TreeGrowEventTest extends CommonTestSetup {
         when(settings.getEndLogsPerTree()).thenReturn(new HashMap<>());
         when(settings.getNetherLeavesPerTree()).thenReturn(new HashMap<>());
         when(settings.getNetherLogsPerTree()).thenReturn(new HashMap<>());
+        when(settings.getEndLeavesPerGamemode()).thenReturn(new HashMap<>());
+        when(settings.getEndLogsPerGamemode()).thenReturn(new HashMap<>());
+        when(settings.getNetherLeavesPerGamemode()).thenReturn(new HashMap<>());
+        when(settings.getNetherLogsPerGamemode()).thenReturn(new HashMap<>());
 
         // Sapling block at the event location
         when(location.getBlock()).thenReturn(saplingBlock);
@@ -321,5 +328,122 @@ class TreeGrowEventTest extends CommonTestSetup {
         map.put("oak", "not_real");
         String result = listener.resolveMaterial(map, "oak", "gravel");
         org.junit.jupiter.api.Assertions.assertEquals("gravel", result);
+    }
+
+    // ── Per-gamemode overrides ─────────────────────────────────────────────
+
+    /**
+     * Creates a mock {@link GameModeAddon} whose {@code getDescription().getName()}
+     * returns the given name, and wires it into {@code iwm.getAddon(world)}.
+     */
+    private void setupGamemode(String gamemodeName) {
+        GameModeAddon gamemodeAddon = org.mockito.Mockito.mock(GameModeAddon.class);
+        AddonDescription desc = new AddonDescription.Builder("main.Class", gamemodeName, "1.0").build();
+        when(gamemodeAddon.getDescription()).thenReturn(desc);
+        when(iwm.getAddon(any(World.class))).thenReturn(Optional.of(gamemodeAddon));
+    }
+
+    @Test
+    void testNetherLogPerGamemodeOverrideUsed() {
+        setupGamemode("CaveBlock");
+        Map<String, String> logsOverride = new HashMap<>();
+        logsOverride.put("CaveBlock", "obsidian");
+        when(settings.getNetherLogsPerGamemode()).thenReturn(logsOverride);
+
+        BlockState logState = org.mockito.Mockito.mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.OBSIDIAN);
+    }
+
+    @Test
+    void testNetherLeavesPerGamemodeOverrideUsed() {
+        setupGamemode("CaveBlock");
+        Map<String, String> leavesOverride = new HashMap<>();
+        leavesOverride.put("CaveBlock", "nether_wart_block");
+        when(settings.getNetherLeavesPerGamemode()).thenReturn(leavesOverride);
+
+        BlockState leafState = org.mockito.Mockito.mock(BlockState.class);
+        when(leafState.getType()).thenReturn(Material.OAK_LEAVES);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(leafState));
+        listener.onTreeGrow(event);
+        verify(leafState).setType(Material.NETHER_WART_BLOCK);
+    }
+
+    @Test
+    void testEndLogPerGamemodeOverrideUsed() {
+        setupGamemode("AcidIsland");
+        Map<String, String> logsOverride = new HashMap<>();
+        logsOverride.put("AcidIsland", "obsidian");
+        when(settings.getEndLogsPerGamemode()).thenReturn(logsOverride);
+
+        BlockState logState = org.mockito.Mockito.mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.THE_END, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.OBSIDIAN);
+    }
+
+    @Test
+    void testEndLeavesPerGamemodeOverrideUsed() {
+        setupGamemode("AcidIsland");
+        Map<String, String> leavesOverride = new HashMap<>();
+        leavesOverride.put("AcidIsland", "grass_block");
+        when(settings.getEndLeavesPerGamemode()).thenReturn(leavesOverride);
+
+        BlockState leafState = org.mockito.Mockito.mock(BlockState.class);
+        when(leafState.getType()).thenReturn(Material.OAK_LEAVES);
+        StructureGrowEvent event = makeEvent(World.Environment.THE_END, List.of(leafState));
+        listener.onTreeGrow(event);
+        verify(leafState).setType(Material.GRASS_BLOCK);
+    }
+
+    @Test
+    void testPerGamemodeDoesNotAffectOtherGamemode() {
+        // Override for CaveBlock; world has no gamemode → falls back to global gravel
+        Map<String, String> logsOverride = new HashMap<>();
+        logsOverride.put("CaveBlock", "obsidian");
+        when(settings.getNetherLogsPerGamemode()).thenReturn(logsOverride);
+        // iwm.getAddon returns empty by default (from CommonTestSetup)
+
+        BlockState logState = org.mockito.Mockito.mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.GRAVEL);
+    }
+
+    @Test
+    void testPerTreeOverrideTakesPriorityOverPerGamemode() {
+        // per-gamemode sets logs to obsidian, but per-tree sets oak logs to netherrack
+        setupGamemode("CaveBlock");
+        Map<String, String> gamemodeOverride = new HashMap<>();
+        gamemodeOverride.put("CaveBlock", "obsidian");
+        when(settings.getNetherLogsPerGamemode()).thenReturn(gamemodeOverride);
+
+        Map<String, String> perTreeOverride = new HashMap<>();
+        perTreeOverride.put("oak", "netherrack");
+        when(settings.getNetherLogsPerTree()).thenReturn(perTreeOverride);
+
+        BlockState logState = org.mockito.Mockito.mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.NETHERRACK);
+    }
+
+    @Test
+    void testGetGamemodeNameReturnsNameWhenPresent() {
+        setupGamemode("BSkyBlock");
+        String name = listener.getGamemodeName(world);
+        org.junit.jupiter.api.Assertions.assertEquals("BSkyBlock", name);
+    }
+
+    @Test
+    void testGetGamemodeNameReturnsEmptyWhenAbsent() {
+        // iwm.getAddon returns empty by default (from CommonTestSetup)
+        String name = listener.getGamemodeName(world);
+        org.junit.jupiter.api.Assertions.assertEquals("", name);
     }
 }

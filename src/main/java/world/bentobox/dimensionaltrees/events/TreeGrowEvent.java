@@ -57,10 +57,14 @@ public class TreeGrowEvent implements Listener {
         if (!treeTypes().contains(treeType)) {
             return;
         }
+        // Determine the gamemode name for the world so per-gamemode overrides can be applied
+        String gamemodeName = getGamemodeName(e.getWorld());
         try {
             if (e.getWorld().getEnvironment().equals(World.Environment.NETHER) && isNetherEnabled()) {
-                String resolvedLogs = resolveMaterial(netherLogsPerTree(), treeType, netherLogs());
-                String resolvedLeaves = resolveMaterial(netherLeavesPerTree(), treeType, netherLeaves());
+                String resolvedLogs = resolveMaterial(netherLogsPerTree(), treeType,
+                        resolveMaterial(netherLogsPerGamemode(), gamemodeName, netherLogs()));
+                String resolvedLeaves = resolveMaterial(netherLeavesPerTree(), treeType,
+                        resolveMaterial(netherLeavesPerGamemode(), gamemodeName, netherLeaves()));
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
@@ -70,8 +74,10 @@ public class TreeGrowEvent implements Listener {
                     }
                 }
             } else if (e.getWorld().getEnvironment().equals(World.Environment.THE_END) && isEndEnabled()) {
-                String resolvedLogs = resolveMaterial(endLogsPerTree(), treeType, endLogs());
-                String resolvedLeaves = resolveMaterial(endLeavesPerTree(), treeType, endLeaves());
+                String resolvedLogs = resolveMaterial(endLogsPerTree(), treeType,
+                        resolveMaterial(endLogsPerGamemode(), gamemodeName, endLogs()));
+                String resolvedLeaves = resolveMaterial(endLeavesPerTree(), treeType,
+                        resolveMaterial(endLeavesPerGamemode(), gamemodeName, endLeaves()));
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
@@ -171,6 +177,35 @@ public class TreeGrowEvent implements Listener {
 
     private Map<String, String> netherLogsPerTree() {
         return addon.getSettings().getNetherLogsPerTree();
+    }
+
+    /**
+     * Returns the gamemode addon name for the given world, or an empty string if the
+     * world is not associated with any gamemode addon.
+     *
+     * @param world the world to look up
+     * @return the gamemode addon name, or {@code ""} if not found
+     */
+    String getGamemodeName(World world) {
+        return addon.getPlugin().getIWM().getAddon(world)
+                .map(a -> a.getDescription().getName())
+                .orElse("");
+    }
+
+    private Map<String, String> endLeavesPerGamemode() {
+        return addon.getSettings().getEndLeavesPerGamemode();
+    }
+
+    private Map<String, String> endLogsPerGamemode() {
+        return addon.getSettings().getEndLogsPerGamemode();
+    }
+
+    private Map<String, String> netherLeavesPerGamemode() {
+        return addon.getSettings().getNetherLeavesPerGamemode();
+    }
+
+    private Map<String, String> netherLogsPerGamemode() {
+        return addon.getSettings().getNetherLogsPerGamemode();
     }
 
 }

@@ -49,6 +49,20 @@ public class Settings implements ConfigObject {
     private Map<String, String> endLogsPerTree = new HashMap<>();
 
     @ConfigComment("")
+    @ConfigComment("Per-gamemode leaf overrides for the End dimension.")
+    @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("If a gamemode is not listed here, the global 'end.leaves' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.end.per-gamemode.leaves")
+    private Map<String, String> endLeavesPerGamemode = new HashMap<>();
+
+    @ConfigComment("")
+    @ConfigComment("Per-gamemode log overrides for the End dimension.")
+    @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("If a gamemode is not listed here, the global 'end.logs' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.end.per-gamemode.logs")
+    private Map<String, String> endLogsPerGamemode = new HashMap<>();
+
+    @ConfigComment("")
     @ConfigComment("The block that will be the leaves on the Nether")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.leaves")
     private String netherLeaves = "glowstone";
@@ -71,6 +85,20 @@ public class Settings implements ConfigObject {
     @ConfigComment("If a tree type is not listed here, the global 'nether.logs' value is used.")
     @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-tree.logs")
     private Map<String, String> netherLogsPerTree = new HashMap<>();
+
+    @ConfigComment("")
+    @ConfigComment("Per-gamemode leaf overrides for the Nether dimension.")
+    @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("If a gamemode is not listed here, the global 'nether.leaves' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-gamemode.leaves")
+    private Map<String, String> netherLeavesPerGamemode = new HashMap<>();
+
+    @ConfigComment("")
+    @ConfigComment("Per-gamemode log overrides for the Nether dimension.")
+    @ConfigComment("Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).")
+    @ConfigComment("If a gamemode is not listed here, the global 'nether.logs' value is used.")
+    @ConfigEntry(path = "dimensionaltrees.blocks.nether.per-gamemode.logs")
+    private Map<String, String> netherLogsPerGamemode = new HashMap<>();
 
     /* Options */
     @ConfigComment("")
@@ -139,6 +167,22 @@ public class Settings implements ConfigObject {
         this.netherLogsPerTree = netherLogsPerTree;
     }
 
+    public void setEndLeavesPerGamemode(Map<String, String> endLeavesPerGamemode) {
+        this.endLeavesPerGamemode = endLeavesPerGamemode;
+    }
+
+    public void setEndLogsPerGamemode(Map<String, String> endLogsPerGamemode) {
+        this.endLogsPerGamemode = endLogsPerGamemode;
+    }
+
+    public void setNetherLeavesPerGamemode(Map<String, String> netherLeavesPerGamemode) {
+        this.netherLeavesPerGamemode = netherLeavesPerGamemode;
+    }
+
+    public void setNetherLogsPerGamemode(Map<String, String> netherLogsPerGamemode) {
+        this.netherLogsPerGamemode = netherLogsPerGamemode;
+    }
+
     public void setSendLog(boolean sendLog) {
         this.sendLog = sendLog;
     }
@@ -195,6 +239,22 @@ public class Settings implements ConfigObject {
 
     public Map<String, String> getNetherLogsPerTree() {
         return netherLogsPerTree;
+    }
+
+    public Map<String, String> getEndLeavesPerGamemode() {
+        return endLeavesPerGamemode;
+    }
+
+    public Map<String, String> getEndLogsPerGamemode() {
+        return endLogsPerGamemode;
+    }
+
+    public Map<String, String> getNetherLeavesPerGamemode() {
+        return netherLeavesPerGamemode;
+    }
+
+    public Map<String, String> getNetherLogsPerGamemode() {
+        return netherLogsPerGamemode;
     }
 
     public boolean isSendLog() {
