@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.dimensionaltrees.DimensionalTrees;
+import world.bentobox.dimensionaltrees.MaterialWeightedPicker;
 
 public class TreeGrowEvent implements Listener {
 
@@ -42,12 +43,11 @@ public class TreeGrowEvent implements Listener {
         if (!addon.getPlugin().getIWM().inWorld(e.getWorld())) {
             return;
         }
-        // Verify global settings
-        if (endLeaves() == null || endLogs() == null || netherLeaves() == null || netherLogs() == null
-                || Registry.MATERIAL.get(NamespacedKey.minecraft(endLeaves().toLowerCase(Locale.ENGLISH))) == null
-                || Registry.MATERIAL.get(NamespacedKey.minecraft(endLogs().toLowerCase(Locale.ENGLISH))) == null
-                || Registry.MATERIAL.get(NamespacedKey.minecraft(netherLeaves().toLowerCase(Locale.ENGLISH))) == null
-                || Registry.MATERIAL.get(NamespacedKey.minecraft(netherLogs().toLowerCase(Locale.ENGLISH))) == null) {
+        // Verify global settings are non-null and non-empty
+        if (endLeaves() == null || endLeaves().isEmpty()
+                || endLogs() == null || endLogs().isEmpty()
+                || netherLeaves() == null || netherLeaves().isEmpty()
+                || netherLogs() == null || netherLogs().isEmpty()) {
             warning(e);
             return;
         }
@@ -61,29 +61,29 @@ public class TreeGrowEvent implements Listener {
         String gamemodeName = getGamemodeName(e.getWorld());
         try {
             if (e.getWorld().getEnvironment().equals(World.Environment.NETHER) && isNetherEnabled()) {
-                String resolvedLogs = resolveMaterial(netherLogsPerTree(), treeType,
-                        resolveMaterial(netherLogsPerGamemode(), gamemodeName, netherLogs()));
-                String resolvedLeaves = resolveMaterial(netherLeavesPerTree(), treeType,
-                        resolveMaterial(netherLeavesPerGamemode(), gamemodeName, netherLeaves()));
+                Map<String, Integer> logsWeights = resolveWeights(netherLogsPerTree(), treeType,
+                        resolveWeights(netherLogsPerGamemode(), gamemodeName, netherLogs()));
+                Map<String, Integer> leavesWeights = resolveWeights(netherLeavesPerTree(), treeType,
+                        resolveWeights(netherLeavesPerGamemode(), gamemodeName, netherLeaves()));
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
-                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(resolvedLogs)));
+                        applyWeightedMaterial(b, logsWeights, e);
                     } else if (Tag.LEAVES.isTagged(b.getType())) {
-                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(resolvedLeaves)));
+                        applyWeightedMaterial(b, leavesWeights, e);
                     }
                 }
             } else if (e.getWorld().getEnvironment().equals(World.Environment.THE_END) && isEndEnabled()) {
-                String resolvedLogs = resolveMaterial(endLogsPerTree(), treeType,
-                        resolveMaterial(endLogsPerGamemode(), gamemodeName, endLogs()));
-                String resolvedLeaves = resolveMaterial(endLeavesPerTree(), treeType,
-                        resolveMaterial(endLeavesPerGamemode(), gamemodeName, endLeaves()));
+                Map<String, Integer> logsWeights = resolveWeights(endLogsPerTree(), treeType,
+                        resolveWeights(endLogsPerGamemode(), gamemodeName, endLogs()));
+                Map<String, Integer> leavesWeights = resolveWeights(endLeavesPerTree(), treeType,
+                        resolveWeights(endLeavesPerGamemode(), gamemodeName, endLeaves()));
                 // Modify everything!
                 for (BlockState b : e.getBlocks()) {
                     if (Tag.LOGS.isTagged(b.getType())) {
-                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(resolvedLogs)));
+                        applyWeightedMaterial(b, logsWeights, e);
                     } else if (Tag.LEAVES.isTagged(b.getType())) {
-                        b.setType(Registry.MATERIAL.get(NamespacedKey.minecraft(resolvedLeaves)));
+                        applyWeightedMaterial(b, leavesWeights, e);
                     }
                 }
             }
@@ -93,26 +93,42 @@ public class TreeGrowEvent implements Listener {
     }
 
     /**
-     * Resolves the material to use for a given tree type. If the per-tree map contains
-     * a valid material for {@code treeType}, that material is returned; otherwise the
-     * {@code globalDefault} is returned. Both values are lowercased before use.
+     * Picks a random material from {@code weights} and sets the block to that material.
+     * If the picked name is not a valid registry entry the block is left unchanged.
      *
-     * @param perTreeMap    map of tree-type → material override
-     * @param treeType      the tree type key (e.g. "oak", "acacia")
-     * @param globalDefault the global fallback material name
-     * @return the resolved material name in lowercase
+     * @param b       block state to modify
+     * @param weights weighted material map
+     * @param e       the grow event (used for warning messages)
      */
-    String resolveMaterial(Map<String, String> perTreeMap, String treeType, String globalDefault) {
-        if (perTreeMap != null) {
-            String override = perTreeMap.get(treeType);
-            if (override != null) {
-                String lower = override.toLowerCase(Locale.ENGLISH);
-                if (Registry.MATERIAL.get(NamespacedKey.minecraft(lower)) != null) {
-                    return lower;
-                }
+    private void applyWeightedMaterial(BlockState b, Map<String, Integer> weights, StructureGrowEvent e) {
+        String materialName = MaterialWeightedPicker.pickRandom(weights);
+        Material mat = Registry.MATERIAL.get(NamespacedKey.minecraft(materialName.toLowerCase(Locale.ENGLISH)));
+        if (mat != null) {
+            b.setType(mat);
+        } else {
+            warning(e);
+        }
+    }
+
+    /**
+     * Resolves the weight map to use for a given key. If the per-override map contains
+     * a non-empty weight map for {@code key}, that map is returned; otherwise the
+     * {@code globalDefault} is returned.
+     *
+     * @param perOverrideMap map of key → weight-map override (may be null)
+     * @param key            the lookup key (tree type or gamemode name)
+     * @param globalDefault  the global fallback weight map
+     * @return the resolved weight map
+     */
+    Map<String, Integer> resolveWeights(Map<String, Map<String, Integer>> perOverrideMap,
+            String key, Map<String, Integer> globalDefault) {
+        if (perOverrideMap != null) {
+            Map<String, Integer> override = perOverrideMap.get(key);
+            if (override != null && !override.isEmpty()) {
+                return override;
             }
         }
-        return globalDefault.toLowerCase(Locale.ENGLISH);
+        return globalDefault;
     }
 
 
@@ -127,19 +143,19 @@ public class TreeGrowEvent implements Listener {
         }
     }
 
-    private String endLeaves() {
+    private Map<String, Integer> endLeaves() {
         return addon.getSettings().getEndLeaves();
     }
 
-    private String endLogs() {
+    private Map<String, Integer> endLogs() {
         return addon.getSettings().getEndLogs();
     }
 
-    private String netherLeaves() {
+    private Map<String, Integer> netherLeaves() {
         return addon.getSettings().getNetherLeaves();
     }
 
-    private String netherLogs() {
+    private Map<String, Integer> netherLogs() {
         return addon.getSettings().getNetherLogs();
     }
 
@@ -163,19 +179,19 @@ public class TreeGrowEvent implements Listener {
         return addon.getSettings().isNetherEnabled();
     }
 
-    private Map<String, String> endLeavesPerTree() {
+    private Map<String, Map<String, Integer>> endLeavesPerTree() {
         return addon.getSettings().getEndLeavesPerTree();
     }
 
-    private Map<String, String> endLogsPerTree() {
+    private Map<String, Map<String, Integer>> endLogsPerTree() {
         return addon.getSettings().getEndLogsPerTree();
     }
 
-    private Map<String, String> netherLeavesPerTree() {
+    private Map<String, Map<String, Integer>> netherLeavesPerTree() {
         return addon.getSettings().getNetherLeavesPerTree();
     }
 
-    private Map<String, String> netherLogsPerTree() {
+    private Map<String, Map<String, Integer>> netherLogsPerTree() {
         return addon.getSettings().getNetherLogsPerTree();
     }
 
@@ -192,20 +208,21 @@ public class TreeGrowEvent implements Listener {
                 .orElse("");
     }
 
-    private Map<String, String> endLeavesPerGamemode() {
+    private Map<String, Map<String, Integer>> endLeavesPerGamemode() {
         return addon.getSettings().getEndLeavesPerGamemode();
     }
 
-    private Map<String, String> endLogsPerGamemode() {
+    private Map<String, Map<String, Integer>> endLogsPerGamemode() {
         return addon.getSettings().getEndLogsPerGamemode();
     }
 
-    private Map<String, String> netherLeavesPerGamemode() {
+    private Map<String, Map<String, Integer>> netherLeavesPerGamemode() {
         return addon.getSettings().getNetherLeavesPerGamemode();
     }
 
-    private Map<String, String> netherLogsPerGamemode() {
+    private Map<String, Map<String, Integer>> netherLogsPerGamemode() {
         return addon.getSettings().getNetherLogsPerGamemode();
     }
 
 }
+

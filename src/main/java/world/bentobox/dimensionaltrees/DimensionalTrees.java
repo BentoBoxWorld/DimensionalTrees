@@ -1,5 +1,7 @@
 package world.bentobox.dimensionaltrees;
 
+import java.util.Map;
+
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.dimensionaltrees.commands.AdminCommand;
@@ -37,8 +39,57 @@ public final class DimensionalTrees extends Addon {
             // Disable
             logError("DimensionalTrees settings could not load! Addon disabled.");
             setState(State.DISABLED);
+            return;
         }
 
+        // Validate global weight maps and warn when totals are not 100%
+        validateWeights("end.leaves", settings.getEndLeaves());
+        validateWeights("end.logs", settings.getEndLogs());
+        validateWeights("nether.leaves", settings.getNetherLeaves());
+        validateWeights("nether.logs", settings.getNetherLogs());
+
+        // Validate per-tree overrides
+        validateOverrideMap("end.per-tree.leaves", settings.getEndLeavesPerTree());
+        validateOverrideMap("end.per-tree.logs", settings.getEndLogsPerTree());
+        validateOverrideMap("nether.per-tree.leaves", settings.getNetherLeavesPerTree());
+        validateOverrideMap("nether.per-tree.logs", settings.getNetherLogsPerTree());
+
+        // Validate per-gamemode overrides
+        validateOverrideMap("end.per-gamemode.leaves", settings.getEndLeavesPerGamemode());
+        validateOverrideMap("end.per-gamemode.logs", settings.getEndLogsPerGamemode());
+        validateOverrideMap("nether.per-gamemode.leaves", settings.getNetherLeavesPerGamemode());
+        validateOverrideMap("nether.per-gamemode.logs", settings.getNetherLogsPerGamemode());
+    }
+
+    /**
+     * Validates a single weight map and logs a warning if its values do not sum to 100.
+     *
+     * @param fieldName human-readable config path used in the warning message
+     * @param weights   the weight map to validate; null or empty maps are silently ignored
+     */
+    void validateWeights(String fieldName, Map<String, Integer> weights) {
+        if (weights == null || weights.isEmpty()) return;
+        int total = weights.values().stream().mapToInt(i -> Math.max(i, 0)).sum();
+        if (total < 100) {
+            logWarning("Weight map 'dimensionaltrees.blocks." + fieldName + "' sums to " + total
+                    + "% (< 100%). The remaining " + (100 - total) + "% will be replaced with AIR.");
+        } else if (total > 100) {
+            logWarning("Weight map 'dimensionaltrees.blocks." + fieldName + "' sums to " + total
+                    + "% (> 100%). Weights will be scaled proportionally to 100%.");
+        }
+    }
+
+    /**
+     * Validates every per-key weight map inside an override map.
+     *
+     * @param basePath   the config path prefix used in warning messages
+     * @param overrideMap the outer map (tree-type or gamemode → weight map)
+     */
+    private void validateOverrideMap(String basePath, Map<String, Map<String, Integer>> overrideMap) {
+        if (overrideMap == null || overrideMap.isEmpty()) return;
+        for (Map.Entry<String, Map<String, Integer>> entry : overrideMap.entrySet()) {
+            validateWeights(basePath + "." + entry.getKey(), entry.getValue());
+        }
     }
 
     @Override
@@ -51,3 +102,4 @@ public final class DimensionalTrees extends Addon {
         return settings;
     }
 }
+

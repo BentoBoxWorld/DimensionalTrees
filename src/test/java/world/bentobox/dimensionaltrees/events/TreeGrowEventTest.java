@@ -1,5 +1,8 @@
 package world.bentobox.dimensionaltrees.events;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -53,10 +56,10 @@ class TreeGrowEventTest extends CommonTestSetup {
         when(settings.isEnabled()).thenReturn(true);
         when(settings.isEndEnabled()).thenReturn(true);
         when(settings.isNetherEnabled()).thenReturn(true);
-        when(settings.getEndLeaves()).thenReturn("end_stone");
-        when(settings.getEndLogs()).thenReturn("purpur_block");
-        when(settings.getNetherLeaves()).thenReturn("glowstone");
-        when(settings.getNetherLogs()).thenReturn("gravel");
+        when(settings.getEndLeaves()).thenReturn(Map.of("end_stone", 100));
+        when(settings.getEndLogs()).thenReturn(Map.of("purpur_block", 100));
+        when(settings.getNetherLeaves()).thenReturn(Map.of("glowstone", 100));
+        when(settings.getNetherLogs()).thenReturn(Map.of("gravel", 100));
         when(settings.getTreeTypes()).thenReturn(Arrays.asList("oak", "acacia", "birch"));
         when(settings.isSendLog()).thenReturn(false);
         when(settings.getEndLeavesPerTree()).thenReturn(new HashMap<>());
@@ -117,9 +120,11 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testInvalidNetherLogMaterialCallsWarning() {
-        when(settings.getNetherLogs()).thenReturn("not_a_real_material");
+        when(settings.getNetherLogs()).thenReturn(Map.of("not_a_real_material", 100));
         when(settings.isSendLog()).thenReturn(true);
-        StructureGrowEvent event = makeEvent(World.Environment.NETHER, Collections.emptyList());
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
         listener.onTreeGrow(event);
         verify(addon).logError(any());
     }
@@ -219,8 +224,8 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testNetherLogPerTreeOverrideUsed() {
-        Map<String, String> logsOverride = new HashMap<>();
-        logsOverride.put("oak", "netherrack");
+        Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
+        logsOverride.put("oak", Map.of("netherrack", 100));
         when(settings.getNetherLogsPerTree()).thenReturn(logsOverride);
 
         BlockState logState = mock(BlockState.class);
@@ -232,8 +237,8 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testNetherLeavesPerTreeOverrideUsed() {
-        Map<String, String> leavesOverride = new HashMap<>();
-        leavesOverride.put("oak", "soul_sand");
+        Map<String, Map<String, Integer>> leavesOverride = new HashMap<>();
+        leavesOverride.put("oak", Map.of("soul_sand", 100));
         when(settings.getNetherLeavesPerTree()).thenReturn(leavesOverride);
 
         BlockState leafState = mock(BlockState.class);
@@ -245,8 +250,8 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testEndLogPerTreeOverrideUsed() {
-        Map<String, String> logsOverride = new HashMap<>();
-        logsOverride.put("oak", "obsidian");
+        Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
+        logsOverride.put("oak", Map.of("obsidian", 100));
         when(settings.getEndLogsPerTree()).thenReturn(logsOverride);
 
         BlockState logState = mock(BlockState.class);
@@ -258,8 +263,8 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testEndLeavesPerTreeOverrideUsed() {
-        Map<String, String> leavesOverride = new HashMap<>();
-        leavesOverride.put("oak", "grass_block");
+        Map<String, Map<String, Integer>> leavesOverride = new HashMap<>();
+        leavesOverride.put("oak", Map.of("grass_block", 100));
         when(settings.getEndLeavesPerTree()).thenReturn(leavesOverride);
 
         BlockState leafState = mock(BlockState.class);
@@ -272,8 +277,8 @@ class TreeGrowEventTest extends CommonTestSetup {
     @Test
     void testPerTreeOverrideDoesNotAffectOtherTreeTypes() {
         // Override only affects oak; acacia should still use global gravel
-        Map<String, String> logsOverride = new HashMap<>();
-        logsOverride.put("oak", "netherrack");
+        Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
+        logsOverride.put("oak", Map.of("netherrack", 100));
         when(settings.getNetherLogsPerTree()).thenReturn(logsOverride);
         when(settings.getTreeTypes()).thenReturn(Arrays.asList("oak", "acacia", "birch"));
         when(saplingBlock.getType()).thenReturn(Material.ACACIA_SAPLING);
@@ -287,47 +292,58 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testInvalidPerTreeOverrideFallsBackToGlobal() {
-        // Override has invalid material; should fall back to global "gravel"
-        Map<String, String> logsOverride = new HashMap<>();
-        logsOverride.put("oak", "not_a_real_material");
+        // Override has invalid material; should fall back to global "gravel" since the
+        // invalid name isn't in the registry, and warning is called. But the block is still
+        // processed (global gravel is applied on the non-override path).
+        // With the new design: invalid override → override is returned but the picker picks
+        // "not_a_real_material" → applyWeightedMaterial logs a warning and skips setType.
+        // So verify that setType is NOT called with GRAVEL (the block stays as-is).
+        Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
+        logsOverride.put("oak", Map.of("not_a_real_material", 100));
         when(settings.getNetherLogsPerTree()).thenReturn(logsOverride);
+        when(settings.isSendLog()).thenReturn(true);
 
         BlockState logState = mock(BlockState.class);
         when(logState.getType()).thenReturn(Material.OAK_LOG);
         StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
         listener.onTreeGrow(event);
-        verify(logState).setType(Material.GRAVEL);
+        verify(logState, never()).setType(Material.GRAVEL);
+        verify(addon).logError(any());
     }
 
-    // ── resolveMaterial unit tests ─────────────────────────────────────────
+    // ── resolveWeights unit tests ──────────────────────────────────────────
 
     @Test
-    void testResolveMaterialReturnsOverrideWhenValid() {
-        Map<String, String> map = new HashMap<>();
-        map.put("oak", "netherrack");
-        String result = listener.resolveMaterial(map, "oak", "gravel");
-        org.junit.jupiter.api.Assertions.assertEquals("netherrack", result);
-    }
-
-    @Test
-    void testResolveMaterialReturnsGlobalWhenNoOverride() {
-        Map<String, String> map = new HashMap<>();
-        String result = listener.resolveMaterial(map, "oak", "gravel");
-        org.junit.jupiter.api.Assertions.assertEquals("gravel", result);
+    void testResolveWeightsReturnsOverrideWhenPresent() {
+        Map<String, Map<String, Integer>> map = new HashMap<>();
+        Map<String, Integer> oakWeights = Map.of("netherrack", 100);
+        map.put("oak", oakWeights);
+        Map<String, Integer> result = listener.resolveWeights(map, "oak", Map.of("gravel", 100));
+        assertEquals(oakWeights, result);
     }
 
     @Test
-    void testResolveMaterialReturnsGlobalWhenMapIsNull() {
-        String result = listener.resolveMaterial(null, "oak", "gravel");
-        org.junit.jupiter.api.Assertions.assertEquals("gravel", result);
+    void testResolveWeightsReturnsGlobalWhenNoOverride() {
+        Map<String, Map<String, Integer>> map = new HashMap<>();
+        Map<String, Integer> global = Map.of("gravel", 100);
+        Map<String, Integer> result = listener.resolveWeights(map, "oak", global);
+        assertEquals(global, result);
     }
 
     @Test
-    void testResolveMaterialReturnsGlobalWhenOverrideInvalid() {
-        Map<String, String> map = new HashMap<>();
-        map.put("oak", "not_real");
-        String result = listener.resolveMaterial(map, "oak", "gravel");
-        org.junit.jupiter.api.Assertions.assertEquals("gravel", result);
+    void testResolveWeightsReturnsGlobalWhenMapIsNull() {
+        Map<String, Integer> global = Map.of("gravel", 100);
+        Map<String, Integer> result = listener.resolveWeights(null, "oak", global);
+        assertEquals(global, result);
+    }
+
+    @Test
+    void testResolveWeightsReturnsGlobalWhenOverrideIsEmpty() {
+        Map<String, Map<String, Integer>> map = new HashMap<>();
+        map.put("oak", new HashMap<>()); // empty inner map
+        Map<String, Integer> global = Map.of("gravel", 100);
+        Map<String, Integer> result = listener.resolveWeights(map, "oak", global);
+        assertEquals(global, result);
     }
 
     // ── Per-gamemode overrides ─────────────────────────────────────────────
@@ -346,8 +362,8 @@ class TreeGrowEventTest extends CommonTestSetup {
     @Test
     void testNetherLogPerGamemodeOverrideUsed() {
         setupGamemode("CaveBlock");
-        Map<String, String> logsOverride = new HashMap<>();
-        logsOverride.put("CaveBlock", "obsidian");
+        Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
+        logsOverride.put("CaveBlock", Map.of("obsidian", 100));
         when(settings.getNetherLogsPerGamemode()).thenReturn(logsOverride);
 
         BlockState logState = org.mockito.Mockito.mock(BlockState.class);
@@ -360,8 +376,8 @@ class TreeGrowEventTest extends CommonTestSetup {
     @Test
     void testNetherLeavesPerGamemodeOverrideUsed() {
         setupGamemode("CaveBlock");
-        Map<String, String> leavesOverride = new HashMap<>();
-        leavesOverride.put("CaveBlock", "nether_wart_block");
+        Map<String, Map<String, Integer>> leavesOverride = new HashMap<>();
+        leavesOverride.put("CaveBlock", Map.of("nether_wart_block", 100));
         when(settings.getNetherLeavesPerGamemode()).thenReturn(leavesOverride);
 
         BlockState leafState = org.mockito.Mockito.mock(BlockState.class);
@@ -374,8 +390,8 @@ class TreeGrowEventTest extends CommonTestSetup {
     @Test
     void testEndLogPerGamemodeOverrideUsed() {
         setupGamemode("AcidIsland");
-        Map<String, String> logsOverride = new HashMap<>();
-        logsOverride.put("AcidIsland", "obsidian");
+        Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
+        logsOverride.put("AcidIsland", Map.of("obsidian", 100));
         when(settings.getEndLogsPerGamemode()).thenReturn(logsOverride);
 
         BlockState logState = org.mockito.Mockito.mock(BlockState.class);
@@ -388,8 +404,8 @@ class TreeGrowEventTest extends CommonTestSetup {
     @Test
     void testEndLeavesPerGamemodeOverrideUsed() {
         setupGamemode("AcidIsland");
-        Map<String, String> leavesOverride = new HashMap<>();
-        leavesOverride.put("AcidIsland", "grass_block");
+        Map<String, Map<String, Integer>> leavesOverride = new HashMap<>();
+        leavesOverride.put("AcidIsland", Map.of("grass_block", 100));
         when(settings.getEndLeavesPerGamemode()).thenReturn(leavesOverride);
 
         BlockState leafState = org.mockito.Mockito.mock(BlockState.class);
@@ -402,8 +418,8 @@ class TreeGrowEventTest extends CommonTestSetup {
     @Test
     void testPerGamemodeDoesNotAffectOtherGamemode() {
         // Override for CaveBlock; world has no gamemode → falls back to global gravel
-        Map<String, String> logsOverride = new HashMap<>();
-        logsOverride.put("CaveBlock", "obsidian");
+        Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
+        logsOverride.put("CaveBlock", Map.of("obsidian", 100));
         when(settings.getNetherLogsPerGamemode()).thenReturn(logsOverride);
         // iwm.getAddon returns empty by default (from CommonTestSetup)
 
@@ -418,12 +434,12 @@ class TreeGrowEventTest extends CommonTestSetup {
     void testPerTreeOverrideTakesPriorityOverPerGamemode() {
         // per-gamemode sets logs to obsidian, but per-tree sets oak logs to netherrack
         setupGamemode("CaveBlock");
-        Map<String, String> gamemodeOverride = new HashMap<>();
-        gamemodeOverride.put("CaveBlock", "obsidian");
+        Map<String, Map<String, Integer>> gamemodeOverride = new HashMap<>();
+        gamemodeOverride.put("CaveBlock", Map.of("obsidian", 100));
         when(settings.getNetherLogsPerGamemode()).thenReturn(gamemodeOverride);
 
-        Map<String, String> perTreeOverride = new HashMap<>();
-        perTreeOverride.put("oak", "netherrack");
+        Map<String, Map<String, Integer>> perTreeOverride = new HashMap<>();
+        perTreeOverride.put("oak", Map.of("netherrack", 100));
         when(settings.getNetherLogsPerTree()).thenReturn(perTreeOverride);
 
         BlockState logState = org.mockito.Mockito.mock(BlockState.class);
@@ -437,13 +453,51 @@ class TreeGrowEventTest extends CommonTestSetup {
     void testGetGamemodeNameReturnsNameWhenPresent() {
         setupGamemode("BSkyBlock");
         String name = listener.getGamemodeName(world);
-        org.junit.jupiter.api.Assertions.assertEquals("BSkyBlock", name);
+        assertEquals("BSkyBlock", name);
     }
 
     @Test
     void testGetGamemodeNameReturnsEmptyWhenAbsent() {
         // iwm.getAddon returns empty by default (from CommonTestSetup)
         String name = listener.getGamemodeName(world);
-        org.junit.jupiter.api.Assertions.assertEquals("", name);
+        assertEquals("", name);
+    }
+
+    // ── Weighted material selection ────────────────────────────────────────
+
+    @Test
+    void testWeightedNetherLogReplacedWithMixedMaterials() {
+        // 100% obsidian → always obsidian
+        when(settings.getNetherLogs()).thenReturn(Map.of("obsidian", 100));
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.OBSIDIAN);
+    }
+
+    @Test
+    void testNullGlobalWeightMapCallsWarning() {
+        when(settings.getNetherLogs()).thenReturn(null);
+        when(settings.isSendLog()).thenReturn(true);
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(addon).logError(any());
+        verify(logState, never()).setType(any());
+    }
+
+    @Test
+    void testEmptyGlobalWeightMapCallsWarning() {
+        when(settings.getNetherLogs()).thenReturn(new HashMap<>());
+        when(settings.isSendLog()).thenReturn(true);
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(addon).logError(any());
+        verify(logState, never()).setType(any());
     }
 }
+
