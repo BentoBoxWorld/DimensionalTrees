@@ -35,6 +35,22 @@ dimensionaltrees:
         #  acacia: purpur_block
         #  dark_oak: end_stone
 
+      # Per-gamemode overrides for the End dimension.
+      # Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).
+      # These apply after the global default but before per-tree overrides.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-gamemode:
+        # Uncomment and set individual gamemodes to override the global 'end.leaves' value.
+        leaves:
+        #  BSkyBlock: end_stone
+        #  CaveBlock: obsidian
+        #  AcidIsland: end_stone
+        # Uncomment and set individual gamemodes to override the global 'end.logs' value.
+        logs:
+        #  BSkyBlock: purpur_block
+        #  CaveBlock: obsidian
+        #  AcidIsland: purpur_block
+
     nether:
 
       # The block that will be the leaves in the Nether (global default)
@@ -64,6 +80,22 @@ dimensionaltrees:
         #  jungle: soul_sand
         #  acacia: gravel
         #  dark_oak: netherrack
+
+      # Per-gamemode overrides for the Nether dimension.
+      # Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).
+      # These apply after the global default but before per-tree overrides.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-gamemode:
+        # Uncomment and set individual gamemodes to override the global 'nether.leaves' value.
+        leaves:
+        #  BSkyBlock: glowstone
+        #  CaveBlock: nether_wart_block
+        #  AcidIsland: pumpkin
+        # Uncomment and set individual gamemodes to override the global 'nether.logs' value.
+        logs:
+        #  BSkyBlock: gravel
+        #  CaveBlock: obsidian
+        #  AcidIsland: melon_block
 
   messages:
 
