@@ -7,29 +7,28 @@ dimensionaltrees:
   blocks:
     end:
 
-      # The block that will be the leaves on the End
+      # The block that will be the leaves in the End
       leaves: end_stone
 
-      # The block that will be the logs on the End
+      # The block that will be the logs in the End
       logs: purpur_block
 
     nether:
 
-      # The block that will be the leaves on the Nether
+      # The block that will be the leaves in the Nether
       leaves: glowstone
 
-      # The block that will be the logs on the Nether
+      # The block that will be the logs in the Nether
       logs: gravel
 
   messages:
 
-    # Warning to invalid blocks on config file
+    # Warning for invalid blocks in config file
     invalid: "§cCan't grow the tree. A invalid material has been detected."
 
   options:
 
-    # Defines if send debug messages to the log.
-    # For example the sapling position if have a invalid block.
+    # Send debug messages to the console.
     sendlog: true
 
     # Enable/disable the addon.
@@ -46,8 +45,8 @@ dimensionaltrees:
     # Like the default settings.
     tree_types:
       - oak
-      #- spruce
+      - spruce
       - acacia
-      #- dark_oak
-      #- jungle
+      - dark_oak
+      - jungle
       - birch

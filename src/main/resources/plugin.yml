@@ -3,7 +3,7 @@ main: world.bentobox.dimensionaltrees.DimensionalTreesPladdon
 version: ${project.version}${build.number}
 api-version: "1.21"
 
-authors: [AwakenedRedstone, tastybento, Poslovitch]
+authors: [AwakenedRedstone, tastybento]
 contributors: ["The BentoBoxWorld Community"]
 website: https://bentobox.world
 description: ${project.description}
