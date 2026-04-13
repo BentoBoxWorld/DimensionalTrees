@@ -89,7 +89,7 @@ Weight rules:
 
 Override the global block replacements for individual tree species. Useful when you want oak trees to look different from acacia trees in the same dimension.
 
-Priority: **per-tree** > per-gamemode > global default.
+Priority (highest to lowest): **per-tree** → per-gamemode → global default.
 
 ```yaml
     nether:
@@ -111,7 +111,7 @@ Supported tree type keys: `oak`, `spruce`, `birch`, `jungle`, `acacia`, `dark_oa
 
 If you run multiple BentoBox gamemodes (e.g. BSkyBlock and CaveBlock) on the same server, you can configure different block replacements per gamemode. Per-gamemode overrides fall back to the global default when a gamemode is not listed.
 
-Priority: per-tree > **per-gamemode** > global default.
+Priority (highest to lowest): per-tree → **per-gamemode** → global default.
 
 ```yaml
     nether:
