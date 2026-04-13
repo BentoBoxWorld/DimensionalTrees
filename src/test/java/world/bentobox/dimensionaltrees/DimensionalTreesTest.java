@@ -34,25 +34,27 @@ import world.bentobox.bentobox.managers.CommandsManager;
 class DimensionalTreesTest extends CommonTestSetup {
 
     private static final String CONFIG_YML =
-            "dimensionaltrees:\n" +
-            "  commands:\n" +
-            "    admin: \"dtrees dimensionaltrees dt\"\n" +
-            "  blocks:\n" +
-            "    end:\n" +
-            "      leaves: end_stone\n" +
-            "      logs: purpur_block\n" +
-            "    nether:\n" +
-            "      leaves: glowstone\n" +
-            "      logs: gravel\n" +
-            "  options:\n" +
-            "    sendlog: true\n" +
-            "    enable_addon: true\n" +
-            "    end_trees: true\n" +
-            "    nether_trees: true\n" +
-            "    tree_types:\n" +
-            "      - oak\n" +
-            "      - acacia\n" +
-            "      - birch\n";
+            """
+                    dimensionaltrees:
+                      commands:
+                        admin: "dtrees dimensionaltrees dt"
+                      blocks:
+                        end:
+                          leaves: end_stone
+                          logs: purpur_block
+                        nether:
+                          leaves: glowstone
+                          logs: gravel
+                      options:
+                        sendlog: true
+                        enable_addon: true
+                        end_trees: true
+                        nether_trees: true
+                        tree_types:
+                          - oak
+                          - acacia
+                          - birch
+                    """;
 
     @Mock
     private AddonsManager am;
