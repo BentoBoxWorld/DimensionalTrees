@@ -117,7 +117,7 @@ dimensionaltrees:
   messages:
 
     # Warning for invalid blocks in config file
-    invalid: "§cCan't grow the tree. A invalid material has been detected."
+    invalid: "§cCan't grow the tree. An invalid material has been detected."
 
   options:
 

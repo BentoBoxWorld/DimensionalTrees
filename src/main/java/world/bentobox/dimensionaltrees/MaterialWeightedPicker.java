@@ -1,5 +1,6 @@
 package world.bentobox.dimensionaltrees;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -14,7 +15,7 @@ import java.util.Random;
  *   <li>If weights sum to more than 100 the weights are scaled proportionally so that no
  *       AIR is injected.</li>
  *   <li>If weights sum to less than 100 the remaining percentage is filled with
- *       {@code "air"} (i.e. the block is left as-is or replaced by air).</li>
+ *       {@code "air"} (i.e. the block is left as-is or replaced to air).</li>
  * </ul>
  */
 public class MaterialWeightedPicker {
@@ -52,7 +53,7 @@ public class MaterialWeightedPicker {
             if (w <= 0) continue;
             cumulative += w;
             if (roll < cumulative) {
-                return entry.getKey().toLowerCase();
+                return entry.getKey().toLowerCase(Locale.ENGLISH);
             }
         }
         // Roll fell in the AIR portion (only when total < 100)

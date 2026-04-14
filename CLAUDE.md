@@ -45,6 +45,6 @@ This is a small, focused addon with four main classes:
 
 ## Dependencies
 
-- **Spigot API 1.21.3** — Minecraft server API (provided scope)
-- **BentoBox 2.7.1** — Addon framework (provided scope)
-- **Java 17**
+- **Paper API 1.21.11** (`io.papermc.paper:paper-api`) — Minecraft server API (provided scope)
+- **BentoBox 3.14.0-SNAPSHOT** (`world.bentobox:bentobox`) — Addon framework (provided scope)
+- **Java 21**
