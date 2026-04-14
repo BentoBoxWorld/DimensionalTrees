@@ -58,7 +58,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public abstract class CommonTestSetup {
 
-    protected UUID uuid = UUID.randomUUID();
+    protected final UUID uuid = UUID.randomUUID();
 
     @Mock
     protected Player mockPlayer;
