@@ -2,10 +2,12 @@ name: DimensionalTrees
 main: world.bentobox.dimensionaltrees.DimensionalTrees
 version: ${version}${build.number}
 icon: DARK_OAK_SAPLING
+api-version: 3.12.0
+repository: "BentoBoxWorld/DimensionalTrees"
 
 prefix: DimensionalTrees
 
-authors: [AwakenedRedstone, tastybento, Poslovitch]
+authors: [AwakenedRedstone, tastybento]
 
 softdepend: BSkyBlock, AcidIsland, SkyGrid, CaveBlock, AOneBlock
 

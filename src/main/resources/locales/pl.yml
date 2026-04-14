@@ -1,5 +1,5 @@
 ---
 dimensionaltrees:
-  invalid-material: "&c Nie można wyhodować drzewa. Wykryto nieprawidłowy materiał."
-  reloaded: "&a Drzewa wymiarowe zostały ponownie załadowane."
+  invalid-material: "<red>Nie można wyhodować drzewa. Wykryto nieprawidłowy materiał."
+  reloaded: "<green>Drzewa wymiarowe zostały ponownie załadowane."
   error: błąd

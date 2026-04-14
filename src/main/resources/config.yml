@@ -7,29 +7,121 @@ dimensionaltrees:
   blocks:
     end:
 
-      # The block that will be the leaves on the End
-      leaves: end_stone
+      # The blocks that will be the leaves in the End (global default).
+      # Each entry is a material name and a weight (percentage, 1-100).
+      # Weights > 100 in total are scaled proportionally (no AIR is added).
+      # Weights < 100 in total fill the remainder with AIR.
+      # Example with mixed materials: end_stone: 80 / purpur_block: 20
+      leaves:
+        end_stone: 100
 
-      # The block that will be the logs on the End
-      logs: purpur_block
+      # The blocks that will be the logs in the End (global default).
+      logs:
+        purpur_block: 100
+
+      # Per-tree-type overrides for the End dimension.
+      # Keys are tree type names: oak, spruce, birch, jungle, acacia, dark_oak
+      # Values are weighted material maps (material: weight).
+      # If a tree type is listed here it overrides the global 'end.leaves' / 'end.logs' values.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-tree:
+        # Uncomment and set individual tree types to override the global 'end.leaves' value.
+        leaves:
+        #  oak:
+        #    end_stone: 80
+        #    purpur_block: 20
+        #  spruce:
+        #    purpur_block: 100
+        # Uncomment and set individual tree types to override the global 'end.logs' value.
+        logs:
+        #  oak:
+        #    purpur_block: 100
+        #  spruce:
+        #    end_stone: 100
+
+      # Per-gamemode overrides for the End dimension.
+      # Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).
+      # Values are weighted material maps (material: weight).
+      # These apply after the global default but before per-tree overrides.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-gamemode:
+        # Uncomment and set individual gamemodes to override the global 'end.leaves' value.
+        leaves:
+        #  BSkyBlock:
+        #    end_stone: 100
+        #  CaveBlock:
+        #    obsidian: 50
+        #    end_stone: 50
+        # Uncomment and set individual gamemodes to override the global 'end.logs' value.
+        logs:
+        #  BSkyBlock:
+        #    purpur_block: 100
+        #  CaveBlock:
+        #    obsidian: 100
 
     nether:
 
-      # The block that will be the leaves on the Nether
-      leaves: glowstone
+      # The blocks that will be the leaves in the Nether (global default).
+      # Each entry is a material name and a weight (percentage, 1-100).
+      # Weights > 100 in total are scaled proportionally (no AIR is added).
+      # Weights < 100 in total fill the remainder with AIR.
+      # Example with mixed materials: glowstone: 70 / netherrack: 30
+      leaves:
+        glowstone: 100
 
-      # The block that will be the logs on the Nether
-      logs: gravel
+      # The blocks that will be the logs in the Nether (global default).
+      logs:
+        gravel: 100
+
+      # Per-tree-type overrides for the Nether dimension.
+      # Keys are tree type names: oak, spruce, birch, jungle, acacia, dark_oak
+      # Values are weighted material maps (material: weight).
+      # If a tree type is listed here it overrides the global 'nether.leaves' / 'nether.logs' values.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-tree:
+        # Uncomment and set individual tree types to override the global 'nether.leaves' value.
+        leaves:
+        #  oak:
+        #    glowstone: 100
+        #  spruce:
+        #    netherrack: 50
+        #    soul_sand: 50
+        # Uncomment and set individual tree types to override the global 'nether.logs' value.
+        logs:
+        #  oak:
+        #    gravel: 100
+        #  spruce:
+        #    netherrack: 80
+        #    gravel: 20
+
+      # Per-gamemode overrides for the Nether dimension.
+      # Keys are gamemode addon names (e.g., BSkyBlock, CaveBlock, AcidIsland).
+      # Values are weighted material maps (material: weight).
+      # These apply after the global default but before per-tree overrides.
+      # Remove the # to enable an override, or delete entries to use the global default.
+      per-gamemode:
+        # Uncomment and set individual gamemodes to override the global 'nether.leaves' value.
+        leaves:
+        #  BSkyBlock:
+        #    glowstone: 100
+        #  CaveBlock:
+        #    nether_wart_block: 60
+        #    glowstone: 40
+        # Uncomment and set individual gamemodes to override the global 'nether.logs' value.
+        logs:
+        #  BSkyBlock:
+        #    gravel: 100
+        #  CaveBlock:
+        #    obsidian: 100
 
   messages:
 
-    # Warning to invalid blocks on config file
-    invalid: "§cCan't grow the tree. A invalid material has been detected."
+    # Warning for invalid blocks in config file
+    invalid: "§cCan't grow the tree. An invalid material has been detected."
 
   options:
 
-    # Defines if send debug messages to the log.
-    # For example the sapling position if have a invalid block.
+    # Send debug messages to the console.
     sendlog: true
 
     # Enable/disable the addon.
@@ -46,8 +138,8 @@ dimensionaltrees:
     # Like the default settings.
     tree_types:
       - oak
-      #- spruce
+      - spruce
       - acacia
-      #- dark_oak
-      #- jungle
+      - dark_oak
+      - jungle
       - birch

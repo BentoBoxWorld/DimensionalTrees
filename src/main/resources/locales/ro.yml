@@ -1,5 +1,5 @@
 ---
 dimensionaltrees:
-  invalid-material: "&c Nu poate crește copacul. A fost detectat un material nevalid."
-  reloaded: "&a DimensionalTrees a fost reîncărcat."
+  invalid-material: "<red>Nu poate crește copacul. A fost detectat un material nevalid."
+  reloaded: "<green>DimensionalTrees a fost reîncărcat."
   error: eroare

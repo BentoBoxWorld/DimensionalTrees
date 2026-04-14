@@ -1,6 +1,6 @@
 ---
 dimensionaltrees:
-  invalid-material: "&c Non riesco a far crescere l'albero. È stato rilevato un materiale
+  invalid-material: "<red>Non riesco a far crescere l'albero. È stato rilevato un materiale
     non valido."
-  reloaded: "&a DimensionalTrees è stato ricaricato."
+  reloaded: "<green>DimensionalTrees è stato ricaricato."
   error: errore
