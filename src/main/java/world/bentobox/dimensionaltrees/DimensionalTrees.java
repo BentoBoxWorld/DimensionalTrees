@@ -1,7 +1,10 @@
 package world.bentobox.dimensionaltrees;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.dimensionaltrees.commands.AdminCommand;
@@ -13,6 +16,8 @@ public final class DimensionalTrees extends Addon {
 
     @Override
     public void onLoad() {
+        // Migrate config from 1.8.0 (string block values) to 1.9.0 (weighted maps)
+        migrateConfig();
         // Save the default config from config.yml
         saveDefaultConfig();
         // Load settings from config.yml. This will check if there are any issues with it too.
@@ -30,6 +35,46 @@ public final class DimensionalTrees extends Addon {
     @Override
     public void onDisable() {
         // Nothing to do here
+    }
+
+    /**
+     * Migrates an on-disk config.yml written by DimensionalTrees 1.8.0 to the 1.9.0 format.
+     * In 1.8.0, block entries were plain strings (e.g. {@code leaves: end_stone}).
+     * In 1.9.0, they are weighted maps (e.g. {@code leaves: {end_stone: 100}}).
+     * This method reads the file with a plain YamlConfiguration, converts any String values
+     * at the four block paths to single-entry weight maps, and saves the file back before
+     * BentoBox's Config loader runs.
+     */
+    private void migrateConfig() {
+        File configFile = new File(getDataFolder(), "config.yml");
+        if (!configFile.exists()) return;
+
+        YamlConfiguration raw = YamlConfiguration.loadConfiguration(configFile);
+        boolean changed = false;
+
+        String[] blockKeys = {
+            "dimensionaltrees.blocks.end.leaves",
+            "dimensionaltrees.blocks.end.logs",
+            "dimensionaltrees.blocks.nether.leaves",
+            "dimensionaltrees.blocks.nether.logs"
+        };
+
+        for (String key : blockKeys) {
+            Object value = raw.get(key);
+            if (value instanceof String materialName) {
+                raw.set(key, Map.of(materialName.toLowerCase(), 100));
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            try {
+                raw.save(configFile);
+                getLogger().info("Migrated config.yml from 1.8.0 format to 1.9.0 format.");
+            } catch (IOException e) {
+                logError("Failed to save migrated config.yml: " + e.getMessage());
+            }
+        }
     }
 
     private void loadSettings() {
