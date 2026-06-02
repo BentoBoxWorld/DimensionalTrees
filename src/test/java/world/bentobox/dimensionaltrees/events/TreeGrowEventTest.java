@@ -94,13 +94,17 @@ class TreeGrowEventTest extends CommonTestSetup {
     }
 
     @Test
-    void testNotInWorldSkipsProcessing() {
+    void testNotInBentoBoxWorldStillProcessesNetherTrees() {
+        // Trees in nether/end worlds NOT managed by BentoBox (e.g. gamemodes without a
+        // dedicated nether world) should still be transformed. The inWorld() check has
+        // been removed so that all gamemodes work, not just those that register their
+        // own nether/end worlds.
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         BlockState logState = mock(BlockState.class);
         when(logState.getType()).thenReturn(Material.OAK_LOG);
         StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
         listener.onTreeGrow(event);
-        verify(logState, never()).setType(any());
+        verify(logState).setType(Material.GRAVEL);
     }
 
     @Test

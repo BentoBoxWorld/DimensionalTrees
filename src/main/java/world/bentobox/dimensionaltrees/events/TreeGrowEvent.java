@@ -39,10 +39,6 @@ public class TreeGrowEvent implements Listener {
         if (!isEnabled()) {
             return;
         }
-        // Don't do anything if we're not in the right place.
-        if (!addon.getPlugin().getIWM().inWorld(e.getWorld())) {
-            return;
-        }
         // Verify global settings are non-null and non-empty
         if (endLeaves() == null || endLeaves().isEmpty()
                 || endLogs() == null || endLogs().isEmpty()
