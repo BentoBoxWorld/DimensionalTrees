@@ -39,6 +39,13 @@ public class TreeGrowEvent implements Listener {
         if (!isEnabled()) {
             return;
         }
+        // Only act in BentoBox game mode worlds. getAddon() returns the owning game mode
+        // for any world registered to one - including shared (non per-island) nether/end
+        // worlds. The previous inWorld() check additionally required per-island nether/end
+        // generation, so it wrongly skipped game modes using a single shared nether/end.
+        if (addon.getPlugin().getIWM().getAddon(e.getWorld()).isEmpty()) {
+            return;
+        }
         // Verify global settings are non-null and non-empty
         if (endLeaves() == null || endLeaves().isEmpty()
                 || endLogs() == null || endLogs().isEmpty()

@@ -1,3 +1,15 @@
+# DimensionalTrees configuration.
+#
+# IMPORTANT - scope: DimensionalTrees only transforms trees in BentoBox game mode
+# worlds. A non-BentoBox world (e.g. a normal vanilla nether/end running alongside
+# BentoBox) is never touched.
+#
+# For a game mode's Nether or End to be affected, that game mode must actually
+# generate it. This works whether the dimension is per-island (nether-islands /
+# end-islands: true) or a single shared world (nether-islands / end-islands: false).
+# If a game mode does not generate the dimension at all, its trees grow in the
+# server's own nether/end (a non-BentoBox world) and are left unchanged - listing
+# the game mode under 'per-gamemode' below will NOT change that.
 dimensionaltrees:
   commands:
 
