@@ -73,6 +73,14 @@ class TreeGrowEventTest extends CommonTestSetup {
         when(location.getBlock()).thenReturn(saplingBlock);
         when(saplingBlock.getType()).thenReturn(Material.OAK_SAPLING);
 
+        // By default the event world belongs to a BentoBox game mode, i.e. it is a
+        // BentoBox world. Individual tests override this: setupGamemode() changes the
+        // name, or it is set to empty to simulate a non-BentoBox world.
+        GameModeAddon defaultGamemode = mock(GameModeAddon.class);
+        when(defaultGamemode.getDescription())
+                .thenReturn(new AddonDescription.Builder("main.Class", "BSkyBlock", "1.0").build());
+        when(iwm.getAddon(any(World.class))).thenReturn(Optional.of(defaultGamemode));
+
         listener = new TreeGrowEvent(addon);
     }
 
@@ -94,13 +102,28 @@ class TreeGrowEventTest extends CommonTestSetup {
     }
 
     @Test
-    void testNotInWorldSkipsProcessing() {
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
+    void testNonBentoBoxWorldSkipsProcessing() {
+        // A world not owned by any BentoBox game mode must never be touched.
+        when(iwm.getAddon(any(World.class))).thenReturn(Optional.empty());
         BlockState logState = mock(BlockState.class);
         when(logState.getType()).thenReturn(Material.OAK_LOG);
         StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
         listener.onTreeGrow(event);
         verify(logState, never()).setType(any());
+    }
+
+    @Test
+    void testSharedNetherBentoBoxWorldIsProcessed() {
+        // Regression test for the bug this fix targets: a BentoBox game mode that uses a
+        // single shared (non per-island) nether fails the stricter inWorld() check, but
+        // the world still belongs to the game mode (getAddon present). Such trees must be
+        // transformed. inWorld() returning false here mimics nether-islands: false.
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        BlockState logState = mock(BlockState.class);
+        when(logState.getType()).thenReturn(Material.OAK_LOG);
+        StructureGrowEvent event = makeEvent(World.Environment.NETHER, List.of(logState));
+        listener.onTreeGrow(event);
+        verify(logState).setType(Material.GRAVEL);
     }
 
     @Test
@@ -415,11 +438,11 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testPerGamemodeDoesNotAffectOtherGamemode() {
-        // Override for CaveBlock; world has no gamemode → falls back to global gravel
+        // Override for CaveBlock; the world's game mode is the default BSkyBlock, which is
+        // not in the override map → falls back to global gravel (and is still processed).
         Map<String, Map<String, Integer>> logsOverride = new HashMap<>();
         logsOverride.put("CaveBlock", Map.of("obsidian", 100));
         when(settings.getNetherLogsPerGamemode()).thenReturn(logsOverride);
-        // iwm.getAddon returns empty by default (from CommonTestSetup)
 
         BlockState logState = org.mockito.Mockito.mock(BlockState.class);
         when(logState.getType()).thenReturn(Material.OAK_LOG);
@@ -456,7 +479,7 @@ class TreeGrowEventTest extends CommonTestSetup {
 
     @Test
     void testGetGamemodeNameReturnsEmptyWhenAbsent() {
-        // iwm.getAddon returns empty by default (from CommonTestSetup)
+        when(iwm.getAddon(any(World.class))).thenReturn(Optional.empty());
         String name = listener.getGamemodeName(world);
         assertEquals("", name);
     }
