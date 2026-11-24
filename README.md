@@ -1,4 +1,8 @@
 # 🌲 DimensionalTrees Add-on for BentoBox
+
+<!-- BentoBox stats badges: https://download.bentobox.world/admin (Badges tab) -->
+[![Servers](https://download.bentobox.world/badge/DimensionalTrees/servers.svg)](https://download.bentobox.world/) [![Downloads](https://download.bentobox.world/badge/DimensionalTrees/downloads.svg)](https://download.bentobox.world/) [![Minecraft](https://download.bentobox.world/badge/DimensionalTrees/mc.svg)](https://download.bentobox.world/)
+
 [![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/DimensionalTrees)](https://ci.codemc.org/job/BentoBoxWorld/job/DimensionalTrees/)
 
 ## 🔍 What is DimensionalTrees?
